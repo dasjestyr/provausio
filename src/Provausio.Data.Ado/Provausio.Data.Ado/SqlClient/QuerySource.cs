@@ -1,0 +1,61 @@
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Provausio.Data.Ado.Extensions;
+
+namespace Provausio.Data.Ado.SqlClient
+{
+    /// <summary> 
+    /// </summary>
+    /// <typeparam name="T">The object type of the result collection</typeparam>
+    /// <seealso cref="CommandBase" />
+    public abstract class QuerySource<T> : CommandBase
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuerySource{T}"/> class.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="commandType">Type of the command.</param>
+        protected QuerySource(string connectionString, string commandText, CommandType commandType = CommandType.StoredProcedure)
+            : base(connectionString, commandText, commandType)
+        {
+        }
+
+        /// <summary>
+        /// When implemented, provides logic for reading a single record into an object
+        /// </summary>
+        /// <param name="record">The record.</param>
+        /// <returns></returns>
+        public abstract T GetFromReader(IDataRecord record);
+
+        /// <summary>
+        /// Executes the query.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<T>> ExecuteQueryAsync()
+        {
+            using (var command = GetCommand())
+            {
+                await command.Connection.OpenAsync();
+
+                Trace.TraceInformation($"Executing {command.ToInfoString()}...");
+
+                using (var reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection))
+                {
+                    var result = new List<T>();
+                    while (reader.Read())
+                    {
+                        var item = GetFromReader(reader);
+                        result.Add(item);
+                    }
+
+                    Trace.TraceInformation($"Query completed with {result.Count} results!");
+                    
+                    return result;
+                }
+            }
+        }
+    }
+}
