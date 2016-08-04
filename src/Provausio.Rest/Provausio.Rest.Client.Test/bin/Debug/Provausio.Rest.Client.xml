@@ -1,0 +1,374 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Provausio.Rest.Client</name>
+    </assembly>
+    <members>
+        <member name="F:Provausio.Rest.Client.Infrastructure.BodyFormat.Unspecified">
+            <summary>
+            The value was not explicitly set
+            </summary>
+        </member>
+        <member name="F:Provausio.Rest.Client.Infrastructure.BodyFormat.String">
+            <summary>
+            text/plain
+            </summary>
+        </member>
+        <member name="F:Provausio.Rest.Client.Infrastructure.BodyFormat.Json">
+            <summary>
+            application/json
+            </summary>
+        </member>
+        <member name="F:Provausio.Rest.Client.Infrastructure.BodyFormat.Xml">
+            <summary>
+            application/xml
+            </summary>
+        </member>
+        <member name="F:Provausio.Rest.Client.Infrastructure.BodyFormat.Binary">
+            <summary>
+            Byte array
+            </summary>
+        </member>
+        <member name="T:Provausio.Rest.Client.Infrastructure.QueryParameterCollection">
+            <summary>
+            
+            </summary>
+            <seealso cref="T:System.Collections.Generic.Dictionary`2" />
+        </member>
+        <member name="M:Provausio.Rest.Client.Infrastructure.QueryParameterCollection.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.Infrastructure.QueryParameterCollection"/> class.
+            </summary>
+        </member>
+        <member name="M:Provausio.Rest.Client.Infrastructure.QueryParameterCollection.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.Infrastructure.QueryParameterCollection"/> class.
+            </summary>
+            <param name="parameters">The parameters.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.Infrastructure.QueryParameterCollection.#ctor(System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.Infrastructure.QueryParameterCollection"/> class.
+            </summary>
+            <param name="parameters">The parameters.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.Infrastructure.QueryParameterCollection.Add(System.Object)">
+            <summary>
+            Adds the specified parameters.
+            </summary>
+            <param name="parameters">The parameters.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.Infrastructure.QueryParameterCollection.ToString">
+            <summary>
+            Returns a <see cref="T:System.String" /> that represents this instance.
+            </summary>
+            <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
+        </member>
+        <member name="F:Provausio.Rest.Client.Infrastructure.Scheme.Unspecified">
+            <summary>
+            Default fault. The value was not explicitly set
+            </summary>
+        </member>
+        <member name="F:Provausio.Rest.Client.Infrastructure.Scheme.Http">
+            <summary>
+            Hypertext Transfer Protocol
+            </summary>
+        </member>
+        <member name="F:Provausio.Rest.Client.Infrastructure.Scheme.Https">
+            <summary>
+            Hypertext Transfer Protocol Secure
+            </summary>
+        </member>
+        <member name="F:Provausio.Rest.Client.Infrastructure.Scheme.Ftp">
+            <summary>
+            File Transfer Protocol
+            </summary>
+        </member>
+        <member name="M:Provausio.Rest.Client.Ext.HttpResponseMessageExt.Deserialize``1(System.Net.Http.HttpResponseMessage,Provausio.Rest.Client.Infrastructure.BodyFormat)">
+            <summary>
+            Deserializes the specified format.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="response">The response.</param>
+            <param name="format">The format.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Provausio.Rest.Client.ContentType.FormUrlEncodedContent">
+            <summary>
+            Extends <see cref="T:System.Net.Http.FormUrlEncodedContent"/>. Provides a ctor that will serializes all public properties to a form post string.
+            </summary>
+        </member>
+        <member name="M:Provausio.Rest.Client.ContentType.FormUrlEncodedContent.#ctor(System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.ContentType.FormUrlEncodedContent"/> class.
+            </summary>
+            <param name="parametersObject">The parameters object.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.ContentType.FormUrlEncodedContent.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.ContentType.FormUrlEncodedContent"/> class.
+            </summary>
+            <param name="nameValueCollection">The name value collection.</param>
+        </member>
+        <member name="T:Provausio.Rest.Client.ContentType.XmlDataContractContent">
+            <summary>
+            Serializes a properly <see cref="T:System.Runtime.Serialization.DataContractAttribute"/>-decorated object to xml and adds it to the content stream.
+            </summary>
+            <seealso cref="!:.ByteArrayContent" />
+        </member>
+        <member name="M:Provausio.Rest.Client.ContentType.XmlDataContractContent.#ctor(System.Type,System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.ContentType.XmlDataContractContent"/> class.
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <param name="content">The content.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.ContentType.XmlDataContractContent.#ctor(System.Byte[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.ContentType.XmlDataContractContent"/> class.
+            </summary>
+            <param name="content">The content used to initialize the <see cref="T:System.Net.Http.ByteArrayContent" />.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.ContentType.XmlDataContractContent.#ctor(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.ContentType.XmlDataContractContent"/> class.
+            </summary>
+            <param name="content">The content used to initialize the <see cref="T:System.Net.Http.ByteArrayContent" />.</param>
+            <param name="offset">The offset, in bytes, in the <paramref name="content" />  parameter used to initialize the <see cref="T:System.Net.Http.ByteArrayContent" />.</param>
+            <param name="count">The number of bytes in the <paramref name="content" /> starting from the <paramref name="offset" /> parameter used to initialize the <see cref="T:System.Net.Http.ByteArrayContent" />.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.IResourceBuilder.WithScheme(Provausio.Rest.Client.Infrastructure.Scheme)">
+            <summary>
+            Sets the scheme.
+            </summary>
+            <param name="scheme">The scheme.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.IResourceBuilder.WithHost(System.String)">
+            <summary>
+            Sets the host authority.
+            </summary>
+            <param name="host">The host.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.IResourceBuilder.WithPort(System.UInt32)">
+            <summary>
+            Sets the port.
+            </summary>
+            <param name="port">The port.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentException">Invalid port range</exception>
+        </member>
+        <member name="M:Provausio.Rest.Client.IResourceBuilder.WithPath(System.String)">
+            <summary>
+            Adds the resource/path to the host authority.
+            </summary>
+            <param name="path">The path.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.IResourceBuilder.WithQueryParameters(System.Object)">
+            <summary>
+            Adds object properties to the resource as a query string
+            </summary>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">Object is null, nothing to add</exception>
+        </member>
+        <member name="M:Provausio.Rest.Client.IResourceBuilder.WithQueryParameters(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Adds the key value pairs to the resource as a query string
+            </summary>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
+        <member name="M:Provausio.Rest.Client.IResourceBuilder.WithSegmentPair(System.String,System.String)">
+            <summary>
+            Adds a key value pair to the resource as a key/value segement
+            </summary>
+            <param name="name">The name.</param>
+            <param name="value">The value.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">
+            </exception>
+        </member>
+        <member name="M:Provausio.Rest.Client.IResourceBuilder.BuildUri">
+            <summary>
+            Builds the URI.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.IResourceBuilder.WithClient(Provausio.Rest.Client.RestClient)">
+            <summary>
+            Sets the attatched client.
+            </summary>
+            <param name="client">The client.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.IResourceBuilder.AsClient">
+            <summary>
+            Returns the attached client.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.ResourceBuilder"/> class.
+            </summary>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.#ctor(Provausio.Rest.Client.RestClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.ResourceBuilder"/> class.
+            </summary>
+            <param name="client">The client.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.#ctor(Provausio.Rest.Client.Infrastructure.Scheme,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.ResourceBuilder"/> class.
+            </summary>
+            <param name="scheme">The scheme.</param>
+            <param name="host">The host.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.#ctor(Provausio.Rest.Client.RestClient,Provausio.Rest.Client.Infrastructure.Scheme,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.ResourceBuilder" /> class.
+            </summary>
+            <param name="client">The client to which this builder will be attached.</param>
+            <param name="scheme">The scheme.</param>
+            <param name="host">The host.</param>
+            <exception cref="T:System.ArgumentException">
+            Must specify scheme!
+            or
+            Must specify host name
+            </exception>
+            <exception cref="T:System.ArgumentException">Must specify scheme!
+            or
+            Must specify host name</exception>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.WithScheme(Provausio.Rest.Client.Infrastructure.Scheme)">
+            <summary>
+            Sets the scheme.
+            </summary>
+            <param name="scheme">The scheme.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.WithHost(System.String)">
+            <summary>
+            Sets the host authority.
+            </summary>
+            <param name="host">The host.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.WithPort(System.UInt32)">
+            <summary>
+            Sets the port.
+            </summary>
+            <param name="port">The port.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentException">Invalid port range</exception>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.WithPath(System.String)">
+            <summary>
+            Adds the resource/path to the host authority.
+            </summary>
+            <param name="path">The path.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.WithQueryParameters(System.Object)">
+            <summary>
+            Adds object properties to the resource as a query string
+            </summary>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">Object is null, nothing to add</exception>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.WithQueryParameters(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Adds the key value pairs to the resource as a query string
+            </summary>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.WithSegmentPair(System.String,System.String)">
+            <summary>
+            Adds a key value pair to the resource as a key/value segement
+            </summary>
+            <param name="name">The name.</param>
+            <param name="value">The value.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">
+            </exception>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.BuildUri">
+            <summary>
+            Builds the URI.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.ResourceBuilder.AsClient">
+            <summary>
+            Returns the attached client.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Provausio.Rest.Client.RestClient.Handler">
+            <summary>
+            Gets or sets the handler.
+            </summary>
+            <value>
+            The handler.
+            </value>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.RestClient"/> class.
+            </summary>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.#ctor(Provausio.Rest.Client.IResourceBuilder)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.RestClient"/> class.
+            </summary>
+            <param name="builder">The builder.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.GetAsync">
+            <summary>
+            Executes a GET request asychronously
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.DeleteAsync">
+            <summary>
+            Executes a DELETE request asychronously
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.PostAsync">
+            <summary>
+            Executes a POST request asychronously
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.PostAsync(System.Net.Http.HttpContent)">
+            <summary>
+            Executes a POST request asychronously. Will also attach a payload with the request.
+            </summary>
+            <param name="content">The content.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.PutAsync">
+            <summary>
+            Executes a PUT request asychronously. Will also attach a payload with the request.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.PutAsync(System.Net.Http.HttpContent)">
+            <summary>
+            Executes a PUT request asychronously. Will also attach a payload with the request.
+            </summary>
+            <param name="content">The content.</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Jeremy Stafford</authors>
+    <owners>Jeremy Stafford</owners>
+    <projectUrl>https://github.com/dasjestyr/RestClient</projectUrl>
+    <!--<licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>    
+    <iconUrl></iconUrl> -->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An HttpClient wrapper with a fluid URI builder</description>
+    <releaseNotes>Alpha</releaseNotes>
+    <copyright>Copyright 2016 Jeremy Stafford</copyright>
+    <tags>http client wrapper rest fluid api</tags>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="9.0.1" />
+    </dependencies>
+  </metadata>
+</package>
