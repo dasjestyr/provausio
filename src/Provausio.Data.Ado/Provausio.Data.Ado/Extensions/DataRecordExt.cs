@@ -13,7 +13,7 @@ namespace Provausio.Data.Ado.Extensions
         /// <param name="fieldName">Name of the field.</param>
         /// <param name="throwOnfailure">if set to <c>true</c> [throw onfailure].</param>
         /// <returns></returns>
-        public static T DbCast<T>(this IDataRecord record, string fieldName, bool throwOnfailure = false)
+        public static T DbCast<T>(this IDataRecord record, string fieldName, bool throwOnfailure = true)
         {
             try
             {
@@ -38,7 +38,7 @@ namespace Provausio.Data.Ado.Extensions
         /// <param name="fieldName">Name of the field.</param>
         /// <param name="throwOnFailure">if set to <c>true</c> [throw on failure].</param>
         /// <returns></returns>
-        public static T? DbCastNullable<T>(this IDataRecord record, string fieldName, bool throwOnFailure = false)
+        public static T? DbCastNullable<T>(this IDataRecord record, string fieldName, bool throwOnFailure = true)
             where T : struct
         {
             try
