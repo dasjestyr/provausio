@@ -38,25 +38,26 @@ namespace Provausio.Data.Ado.SqlClient
         {
             using (var command = GetCommand())
             {
-                using (command.Connection)
+                if(command.Connection.State != ConnectionState.Open)
+                    await Task.Run(() => command.Connection.Open()).ConfigureAwait(false);
+
+                Trace.TraceInformation($"Executing {command.ToInfoString()}...");
+
+                StartTimer();
+                using (var reader = await Task.Run(() => command.ExecuteReader(CommandBehavior.CloseConnection)).ConfigureAwait(false))
                 {
-                    await command.Connection.OpenAsync();
-
-                    Trace.TraceInformation($"Executing {command.ToInfoString()}...");
-
-                    using (var reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection))
+                    var result = new List<T>();
+                    while (reader.Read())
                     {
-                        var result = new List<T>();
-                        while (reader.Read())
-                        {
-                            var item = GetFromReader(reader);
-                            result.Add(item);
-                        }
-
-                        Trace.TraceInformation($"Query completed with {result.Count} results!");
-
-                        return result;
+                        var item = GetFromReader(reader);
+                        result.Add(item);
                     }
+
+                    StopTimer();
+
+                    Trace.TraceInformation($"Query completed with {result.Count} results!");
+
+                    return result;
                 }
             }
         }

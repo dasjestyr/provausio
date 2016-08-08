@@ -27,19 +27,20 @@ namespace Provausio.Data.Ado.SqlClient
         /// </summary>
         /// <param name="transaction">The transaction.</param>
         /// <returns></returns>
-        public async Task<SqlParameterCollection> ExecuteNonQueryAsync(SqlTransaction transaction = null)
+        public async Task<IDataParameterCollection> ExecuteNonQueryAsync(SqlTransaction transaction = null)
         {
             using (var command = GetCommand(transaction))
             {
                 using (command.Connection)
                 {
-                    await command.Connection.OpenAsync().ConfigureAwait(false);
+                    await Task.Run(() => command.Connection.Open()).ConfigureAwait(false);
 
                     Trace.TraceInformation($"Executing {command.ToInfoString()}");
 
-                    await command.ExecuteNonQueryAsync().ConfigureAwait(false);
-
-                    command.Connection.Close();
+                    StartTimer();
+                    await Task.Run(() => command.ExecuteNonQuery()).ConfigureAwait(false);
+                    StopTimer(CommandText);
+                    
                     return command.Parameters;
                 }
             }
@@ -70,21 +71,25 @@ namespace Provausio.Data.Ado.SqlClient
             {
                 using (command.Connection)
                 {
-                    await command.Connection.OpenAsync();
+                    await Task.Run(() => command.Connection.Open()).ConfigureAwait(false);
 
                     var failed = 0;
                     var sourceItems = parameterSource.ToList();
+
+                    StartTimer();
                     foreach (var item in sourceItems)
                     {
                         command.Parameters.Clear();
-                        var parameters = GetParameters(item);
-                        command.Parameters.AddRange(parameters);
+                        var parameters = GetParameters(item).ToList();
+                        parameters.ForEach(p => command.Parameters.Add(p));
 
-                        var result = await command.ExecuteNonQueryAsync();
+                        var result = await Task.Run(() => command.ExecuteNonQuery()).ConfigureAwait(false);
 
                         if (result < 0)
                             failed++;
                     }
+
+                    StopTimer(CommandText);
 
                     if (failed > 0)
                         Trace.TraceError($"{failed} non-queries did not succeed ({command.ToInfoString()})");

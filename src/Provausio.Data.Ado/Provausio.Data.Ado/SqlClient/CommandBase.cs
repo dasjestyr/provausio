@@ -8,16 +8,35 @@ namespace Provausio.Data.Ado.SqlClient
 {
     public abstract class CommandBase
     {
-        internal readonly string CommandText;
-
+        private readonly string _commandText;
         private readonly string _connectionString;
+        private readonly IDbConnection _connection;
         private readonly CommandType _commandType;
+        private readonly Stopwatch _sw = new Stopwatch();
+
+        internal readonly string CommandText;
 
         protected CommandBase(string connectionString, string commandText, CommandType commandType = CommandType.StoredProcedure)
         {
-            _connectionString = connectionString;
             CommandText = commandText;
+
+            _connectionString = connectionString;
             _commandType = commandType;
+            
+            var conn = new SqlConnection(connectionString);
+            conn.StateChange += (sender, args) => Trace.TraceInformation($"Connection to {_connectionString} is {args.CurrentState}.");
+            _connection = conn;
+        }
+
+        protected CommandBase(IDbConnection connection, string commandText, CommandType commandType = CommandType.StoredProcedure)
+        {
+            _connection = connection;
+            _commandText = commandText;
+            _commandType = commandType;
+
+            var conn = _connection as SqlConnection;
+            if(conn != null)
+                conn.StateChange += (sender, args) => Trace.TraceInformation($"Connection to {_connectionString} is {args.CurrentState}.");
         }
 
         /// <summary>
@@ -26,6 +45,7 @@ namespace Provausio.Data.Ado.SqlClient
         /// <returns></returns>
         protected virtual IEnumerable<SqlParameter> GetParameters()
         {
+            // default (no parameters)
             return new List<SqlParameter>();
         }
 
@@ -34,21 +54,35 @@ namespace Provausio.Data.Ado.SqlClient
         /// </summary>
         /// <param name="transaction">The transaction.</param>
         /// <returns></returns>
-        protected SqlCommand GetCommand(SqlTransaction transaction = null)
+        protected IDbCommand GetCommand(SqlTransaction transaction = null)
         {
             var parameters = GetParameters().ToList();
-            var connection = new SqlConnection(_connectionString);
-            connection.StateChange += (sender, args) => Trace.TraceInformation($"Connection to {_connectionString} is {args.CurrentState}.");
 
-            var command = new SqlCommand(CommandText, connection) {CommandType = _commandType};
+            var command = _connection.CreateCommand();
+            command.CommandText = _commandText;
+            command.CommandType = _commandType;
 
             if (parameters.Any())
-                command.Parameters.AddRange(parameters.ToArray());
+                parameters.ForEach(p => command.Parameters.Add(p));
 
             if (transaction != null)
                 command.Transaction = transaction;
 
             return command;
+        }
+
+        [Conditional("DEBUG")]
+        protected void StartTimer()
+        {
+            _sw.Reset();
+            _sw.Start();
+        }
+
+        [Conditional("DEBUG")]
+        protected void StopTimer(string operationName = null)
+        {
+            _sw.Stop();
+            Trace.WriteLine($"{operationName ?? "Operation"} took {_sw.ElapsedMilliseconds}ms to complete.");
         }
     }
 }
