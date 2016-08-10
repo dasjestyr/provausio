@@ -6,19 +6,23 @@ using System.Reflection;
 
 namespace Provausio.Parsing
 {
-    public class ArrayObjectMapper<T>
+    /// <summary>
+    /// Parses a character-delimited file into an object using a mapping definition.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class StringArrayObjectMapper<T>
         where T : new()
     {
         private readonly Dictionary<int, Expression<Func<T, object>>> _mappers;
-        private readonly Dictionary<int, Func<string, string>> _valueCallbacks;
+        private readonly Dictionary<int, Func<string, object>> _valueCallbacks;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ArrayObjectMapper{T}"/> class.
+        /// Initializes a new instance of the <see cref="StringArrayObjectMapper{T}"/> class.
         /// </summary>
-        public ArrayObjectMapper()
+        public StringArrayObjectMapper()
         {
             _mappers = new Dictionary<int, Expression<Func<T, object>>>();
-            _valueCallbacks = new Dictionary<int, Func<string, string>>();
+            _valueCallbacks = new Dictionary<int, Func<string, object>>();
         }
 
         /// <summary>
@@ -40,10 +44,10 @@ namespace Provausio.Parsing
         /// </summary>
         /// <param name="index">The index of the value that will be mapped.</param>
         /// <param name="mapping">Expression defining the property on the target object to which the value will be mapped.</param>
-        /// <param name="valueCallback">A callback that will be run against the value before assigning it to the target object.</param>
+        /// <param name="valueCallback">A callback that will be run against the value before assigning it to the target object. Use this for transforming the result value fetched from the source file.</param>
         /// <exception cref="ArgumentNullException">mapping</exception>
         /// <exception cref="ArgumentNullException">valueCallback</exception>
-        public void AddPropertyIndex(int index, Expression<Func<T, object>> mapping, Func<string, string> valueCallback)
+        public void AddPropertyIndex(int index, Expression<Func<T, object>> mapping, Func<string, object> valueCallback)
         {
             if (mapping == null)
                 throw new ArgumentNullException(nameof(mapping));
@@ -75,7 +79,12 @@ namespace Provausio.Parsing
 
                 var propertyMapper = _mappers[i];
 
-                var memberSelector = propertyMapper.Body as MemberExpression;
+                // account for value types
+                var unary = propertyMapper.Body as UnaryExpression;
+
+                var memberSelector = unary == null
+                    ? propertyMapper.Body as MemberExpression
+                    : unary.Operand as MemberExpression;
 
                 var propertyInfo = memberSelector?.Member as PropertyInfo;
                 if (propertyInfo == null)
@@ -86,10 +95,12 @@ namespace Provausio.Parsing
                 if (_valueCallbacks.ContainsKey(i))
                 {
                     var callback = _valueCallbacks[i];
-                    value = callback(value);
+                    propertyInfo.SetValue(target, callback(value), null);
                 }
-
-                propertyInfo.SetValue(target, value, null);
+                else
+                {
+                    propertyInfo.SetValue(target, value, null);
+                }
             }
 
             return target;

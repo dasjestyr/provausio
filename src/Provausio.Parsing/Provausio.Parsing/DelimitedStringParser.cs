@@ -13,7 +13,7 @@ namespace Provausio.Parsing
         private readonly string[] _delimiters;
 
         protected StreamReader FileStream;
-        protected ArrayObjectMapper<T> Mapper;
+        protected StringArrayObjectMapper<T> Mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DelimitedStringParser{T}" /> class.
@@ -80,7 +80,7 @@ namespace Provausio.Parsing
         {
             if (!_mapperConfigured)
             {
-                Mapper = new ArrayObjectMapper<T>();
+                Mapper = new StringArrayObjectMapper<T>();
                 ConfigureMapper();
                 _mapperConfigured = true;
             }
