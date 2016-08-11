@@ -6,23 +6,42 @@ using System.Threading.Tasks;
 
 namespace Provausio.Parsing
 {
-    public abstract class DelimitedStringParser<T> : ObjectParser<T>
+    public class DelimitedStringParser<T> : ObjectParser<T>
         where T : class, new()
     {
-        private bool _mapperConfigured;
+        private readonly StreamReader _streamReader;
+        private readonly StringArrayObjectMapper<T> _mapper;
         private readonly string[] _delimiters;
 
-        protected StreamReader FileStream;
-        protected StringArrayObjectMapper<T> Mapper;
+        /// <summary>
+        /// Gets the base stream.
+        /// </summary>
+        /// <value>
+        /// The base stream.
+        /// </value>
+        public Stream BaseStream => _streamReader.BaseStream;
+
+        /// <summary>
+        /// Specifies whether or not the first row in the source file contains column names.
+        /// </summary>
+        public bool FirstRowHeaders { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mapper.
+        /// </summary>
+        /// <value>
+        /// The mapper.
+        /// </value>
+        public ExplicitMapper<T> Mapper => _mapper.IndexMapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DelimitedStringParser{T}" /> class.
         /// </summary>
-        /// <param name="source">The file path.</param>
+        /// <param name="source">The source string</param>
         /// <param name="delimiters">The delimiters.</param>
         /// <exception cref="ArgumentException">Unknown or unspecified source type</exception>
-        protected DelimitedStringParser(string source, params string[] delimiters)
-            : this((StreamReader) null, delimiters)
+        public DelimitedStringParser(string source, params string[] delimiters)
+            : this((Stream) null, delimiters)
         {
             if(string.IsNullOrEmpty(source))
                 throw new ArgumentNullException(nameof(source));
@@ -30,7 +49,7 @@ namespace Provausio.Parsing
             var bytes = Encoding.UTF8.GetBytes(source);
             var ms = new MemoryStream(bytes);
 
-            FileStream = new StreamReader(ms);
+            _streamReader = new StreamReader(ms);
         }
 
         /// <summary>
@@ -38,35 +57,33 @@ namespace Provausio.Parsing
         /// </summary>
         /// <param name="stream">The stream.</param>
         /// <param name="delimiters">The delimiters.</param>
-        protected DelimitedStringParser(StreamReader stream, params string[] delimiters)
+        public DelimitedStringParser(Stream stream, params string[] delimiters)
         {
             if(stream == null)
                 throw new ArgumentNullException(nameof(stream));
 
-            if(stream.EndOfStream || !stream.BaseStream.CanRead)
+            if(!stream.CanRead)
                 throw new InvalidOperationException("Cannot initialize a parser with a stream that is already at the end.");
-
+            
             _delimiters = delimiters;
-            FileStream = stream;
+            _mapper = new StringArrayObjectMapper<T>();
+            _streamReader = new StreamReader(stream);
         }
 
         /// <summary>
-        /// Reads all and then disposes the stream.
+        /// Reads all lines in a single run.
         /// </summary>
         /// <returns></returns>
         public async Task<IEnumerable<T>> ReadAll()
         {
             var result = await Task.Run(() =>
             {
-                using (this)
+                var items = new List<T>();
+                while (ReadNext())
                 {
-                    var items = new List<T>();
-                    while (ReadNext())
-                    {
-                        items.Add(CurrentLine);
-                    }
-                    return items;
+                    items.Add(CurrentLine);
                 }
+                return items;
             });
 
             return result;
@@ -78,39 +95,32 @@ namespace Provausio.Parsing
         /// <returns></returns>
         public override bool ReadNext()
         {
-            if (!_mapperConfigured)
-            {
-                Mapper = new StringArrayObjectMapper<T>();
-                ConfigureMapper();
-                _mapperConfigured = true;
-            }
+            string[] headers = null;
+            if (FirstRowHeaders)
+                headers = _streamReader.ReadLine().Split(_delimiters, StringSplitOptions.None);
 
             string line = null;
-            while (string.IsNullOrEmpty(line) && !FileStream.EndOfStream)
-            {
-                line = FileStream.ReadLine();
-            }
-
             CurrentLine = null;
-            while (CurrentLine == null && !FileStream.EndOfStream)
-            {
-                CurrentLine = MapLine(line);
-            }
 
+            while (string.IsNullOrEmpty(line) || (CurrentLine == null && !_streamReader.EndOfStream))
+            {
+                line = _streamReader.ReadLine();
+                CurrentLine = MapLine(line, headers);
+            }
+            
             return CurrentLine != null;
         }
-
-        protected abstract void ConfigureMapper();
 
         /// <summary>
         /// Reads the delimited string and attempts to map it using the previously set mapped.
         /// </summary>
         /// <param name="line">The line.</param>
+        /// <param name="headers"></param>
         /// <returns></returns>
-        protected virtual T MapLine(string line)
+        protected virtual T MapLine(string line, string[] headers)
         {
             var parts = line.Split(_delimiters, StringSplitOptions.None);
-            var obj = Mapper.MapObject(parts);
+            var obj = _mapper.MapObject(parts, headers);
 
             return obj;
         }
@@ -120,7 +130,7 @@ namespace Provausio.Parsing
             if (!disposing)
                 return;
 
-            FileStream.Dispose();
+            _streamReader.Dispose();
         }
     }
 }

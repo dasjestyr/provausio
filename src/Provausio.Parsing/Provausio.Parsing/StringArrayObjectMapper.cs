@@ -13,106 +13,56 @@ namespace Provausio.Parsing
     public class StringArrayObjectMapper<T>
         where T : new()
     {
-        private readonly Dictionary<int, Expression<Func<T, object>>> _mappers;
-        private readonly Dictionary<int, Func<string, object>> _valueCallbacks;
+        private readonly IStringArrayMapper<T> _attributeMapper;
+        private IStringArrayMapper<T> _headerMapper;
+
+        /// <summary>
+        /// Gets the index mapper.
+        /// </summary>
+        /// <value>
+        /// The index mapper.
+        /// </value>
+        public ExplicitMapper<T> IndexMapper { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StringArrayObjectMapper{T}"/> class.
         /// </summary>
         public StringArrayObjectMapper()
         {
-            _mappers = new Dictionary<int, Expression<Func<T, object>>>();
-            _valueCallbacks = new Dictionary<int, Func<string, object>>();
-        }
+            IndexMapper = new ExplicitMapper<T>();
 
-        /// <summary>
-        /// Defines a mapper for the value located at the specified index.
-        /// </summary>
-        /// <param name="index">The index of the value that will be mapped.</param>
-        /// <param name="mapping">Expression defining the property on the target object to which the value will be mapped.</param>
-        /// <exception cref="ArgumentNullException">mapping</exception>
-        public void AddPropertyIndex(int index, Expression<Func<T, object>> mapping)
-        {
-            if (mapping == null)
-                throw new ArgumentNullException(nameof(mapping));
-
-            _mappers.Add(index, mapping);
-        }
-
-        /// <summary>
-        /// Defines a mapper for the value located at the specified index.
-        /// </summary>
-        /// <param name="index">The index of the value that will be mapped.</param>
-        /// <param name="mapping">Expression defining the property on the target object to which the value will be mapped.</param>
-        /// <param name="valueCallback">A callback that will be run against the value before assigning it to the target object. Use this for transforming the result value fetched from the source file.</param>
-        /// <exception cref="ArgumentNullException">mapping</exception>
-        /// <exception cref="ArgumentNullException">valueCallback</exception>
-        public void AddPropertyIndex(int index, Expression<Func<T, object>> mapping, Func<string, object> valueCallback)
-        {
-            if (mapping == null)
-                throw new ArgumentNullException(nameof(mapping));
-
-            if (valueCallback == null)
-                throw new ArgumentNullException(nameof(valueCallback));
-
-            _mappers.Add(index, mapping);
-            _valueCallbacks.Add(index, valueCallback);
+            _attributeMapper = new AttributeMapper<T>();
         }
 
         /// <summary>
         /// Maps the object using the provided string array.
         /// </summary>
         /// <param name="source">The source.</param>
+        /// <param name="headers">An array of column names.</param>
         /// <returns></returns>
-        public T MapObject(string[] source)
+        public T MapObject(string[] source, string[] headers = null)
         {
-            if (!_mappers.Any())
-                throw new InvalidOperationException("No mappers were added!");
-
             var target = new T();
-            var maxIndex = _mappers.Max(m => m.Key);
 
-            for (var i = 0; i < source.Length && i <= maxIndex; i++)
+            // map using a priority system. Last dude wins.
+            
+            // by headers
+            if (headers != null)
             {
-                if (!_mappers.ContainsKey(i))
-                    continue;
+                if(_headerMapper == null)
+                    _headerMapper = new HeaderMapper<T>(headers);
 
-                var propertyMapper = _mappers[i];
-
-                // account for value types
-                var unary = propertyMapper.Body as UnaryExpression;
-
-                var memberSelector = unary == null
-                    ? propertyMapper.Body as MemberExpression
-                    : unary.Operand as MemberExpression;
-
-                var propertyInfo = memberSelector?.Member as PropertyInfo;
-                if (propertyInfo == null)
-                    continue;
-
-                var value = GetValue(i, source);
-
-                if (_valueCallbacks.ContainsKey(i))
-                {
-                    var callback = _valueCallbacks[i];
-                    propertyInfo.SetValue(target, callback(value), null);
-                }
-                else
-                {
-                    propertyInfo.SetValue(target, value, null);
-                }
+                target = _headerMapper.Map(source, target);
             }
 
+            // then by explicit mapper
+            if (IndexMapper != null && IndexMapper.Count > 0)
+                target = IndexMapper.Map(source, target);
+
+            // then by attribute
+            target = _attributeMapper.Map(source, target);
+
             return target;
-        }
-
-        private static string GetValue(int index, IReadOnlyList<string> source)
-        {
-            var value = source.Count < index + 1
-                ? string.Empty
-                : source[index];
-
-            return value;
         }
     }
 }

@@ -37,6 +37,8 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArrayPropertyAttribute.cs" />
+    <Compile Include="StringArrayMapper.cs" />
     <Compile Include="StringArrayObjectMapper.cs" />
     <Compile Include="DelimitedStringParser.cs" />
     <Compile Include="ObjectParser.cs" />
