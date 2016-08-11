@@ -38,9 +38,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArrayPropertyAttribute.cs" />
-    <Compile Include="StringArrayMapper.cs" />
-    <Compile Include="StringArrayObjectMapper.cs" />
-    <Compile Include="DelimitedStringParser.cs" />
+    <Compile Include="Csv\ExplicitMapper.cs" />
+    <Compile Include="Csv\HeaderMapper.cs" />
+    <Compile Include="Csv\IStringArrayMapper.cs" />
+    <Compile Include="Csv\AttributeMapper.cs" />
+    <Compile Include="Csv\StringArrayObjectMapper.cs" />
+    <Compile Include="Csv\DelimitedStringReader.cs" />
     <Compile Include="ObjectParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

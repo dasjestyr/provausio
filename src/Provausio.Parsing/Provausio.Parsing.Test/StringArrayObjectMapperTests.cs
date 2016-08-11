@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Provausio.Parsing.Csv;
+using Xunit;
 
 namespace Provausio.Parsing.Test
 {

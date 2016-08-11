@@ -4,9 +4,9 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Provausio.Parsing
+namespace Provausio.Parsing.Csv
 {
-    public class DelimitedStringParser<T> : ObjectParser<T>
+    public class DelimitedStringReader<T> : ObjectParser<T>
         where T : class, new()
     {
         private readonly StreamReader _streamReader;
@@ -35,12 +35,12 @@ namespace Provausio.Parsing
         public ExplicitMapper<T> Mapper => _mapper.IndexMapper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DelimitedStringParser{T}" /> class.
+        /// Initializes a new instance of the <see cref="DelimitedStringReader{T}" /> class.
         /// </summary>
         /// <param name="source">The source string</param>
         /// <param name="delimiters">The delimiters.</param>
         /// <exception cref="ArgumentException">Unknown or unspecified source type</exception>
-        public DelimitedStringParser(string source, params string[] delimiters)
+        public DelimitedStringReader(string source, params string[] delimiters)
             : this((Stream) null, delimiters)
         {
             if(string.IsNullOrEmpty(source))
@@ -53,11 +53,11 @@ namespace Provausio.Parsing
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DelimitedStringParser{T}"/> class.
+        /// Initializes a new instance of the <see cref="DelimitedStringReader{T}"/> class.
         /// </summary>
         /// <param name="stream">The stream.</param>
         /// <param name="delimiters">The delimiters.</param>
-        public DelimitedStringParser(Stream stream, params string[] delimiters)
+        public DelimitedStringReader(Stream stream, params string[] delimiters)
         {
             if(stream == null)
                 throw new ArgumentNullException(nameof(stream));

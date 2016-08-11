@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using Provausio.Parsing.Csv;
 using Xunit;
 
 namespace Provausio.Parsing.Test
@@ -20,7 +21,7 @@ namespace Provausio.Parsing.Test
         {
             // arrange
             var stream = GetStream(_sourceWithHeaders);
-            var reader = new DelimitedStringParser<FakeUser>(stream, "\t") {FirstRowHeaders = true};
+            var reader = new DelimitedStringReader<FakeUser>(stream, "\t") {FirstRowHeaders = true};
             using (reader)
             {
                 // act
@@ -40,7 +41,7 @@ namespace Provausio.Parsing.Test
             // arrange
             var stream = GetStream(_sourceNoHeaders);
 
-            using (var reader = new DelimitedStringParser<FakeUser>(stream, "\t"))
+            using (var reader = new DelimitedStringReader<FakeUser>(stream, "\t"))
             {
                 reader.Mapper.AddPropertyIndex(0, t => t.FirstName);
                 reader.Mapper.AddPropertyIndex(1, t => t.LastName);

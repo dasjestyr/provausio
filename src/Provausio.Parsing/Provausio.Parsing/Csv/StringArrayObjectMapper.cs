@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-
-namespace Provausio.Parsing
+﻿namespace Provausio.Parsing.Csv
 {
     /// <summary>
     /// Parses a character-delimited file into an object using a mapping definition.
