@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Provausio.Data.Collections
 {
-    public class PropertyFilter<T>
+    public class PropertyFilter<T> : ISearchFilter<T>
     {
         private readonly string _query;
         private readonly List<Expression<Func<T, object>>> _properties;
@@ -50,7 +50,7 @@ namespace Provausio.Data.Collections
         /// <returns>
         ///   <c>true</c> if [is loose match] [the specified target]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsLooseMatch(T target, bool caseSensitive = false)
+        public bool IsLooseMatch(T target, bool caseSensitive)
         {
             var objectWords = new List<string>();
 
@@ -73,7 +73,7 @@ namespace Provausio.Data.Collections
         /// <returns>
         ///   <c>true</c> if [is exact match] [the specified target]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsExactMatch(T target, bool caseSensitive = true)
+        public bool IsExactMatch(T target, bool caseSensitive)
         {
             return _properties
                 .Select(property => property.Compile()(target).ToString())
@@ -106,5 +106,18 @@ namespace Provausio.Data.Collections
 
             return Expression.Lambda<Func<T, object>>(field, param);
         }
+    }
+
+    public interface ISearchFilter<in T>
+    {
+        bool IsLooseMatch(T target, bool caseSensitive);
+
+        bool IsExactMatch(T target, bool caseSensitive);
+    }
+
+    public enum SearchMode
+    {
+        Exact,
+        Loose
     }
 }

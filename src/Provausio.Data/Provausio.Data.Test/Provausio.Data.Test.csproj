@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Collections\DynamicSortTests.cs" />
     <Compile Include="Collections\PropertyFilterTests.cs" />
+    <Compile Include="Ext\WhereExtTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

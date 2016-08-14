@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Collections\DynamicSort.cs" />
     <Compile Include="Collections\PropertyFilter.cs" />
+    <Compile Include="Ext\WhereExt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

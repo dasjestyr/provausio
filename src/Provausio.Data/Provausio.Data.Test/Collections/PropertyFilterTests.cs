@@ -20,7 +20,7 @@ namespace Provausio.Data.Test.Collections
                 t => t.Property2);
 
             // act
-            var isMatch = filter.IsLooseMatch(testClass);
+            var isMatch = filter.IsLooseMatch(testClass, false);
 
             // assert
             Assert.True(isMatch);
@@ -37,7 +37,7 @@ namespace Provausio.Data.Test.Collections
                 t => t.Property2);
 
             // act
-            var isMatch = filter.IsLooseMatch(testClass);
+            var isMatch = filter.IsLooseMatch(testClass, false);
 
             // assert
             Assert.True(isMatch);
@@ -54,7 +54,7 @@ namespace Provausio.Data.Test.Collections
                 t => t.Property2);
 
             // act
-            var isMatch = filter.IsLooseMatch(testClass);
+            var isMatch = filter.IsLooseMatch(testClass, false);
 
             // assert
             Assert.False(isMatch);
@@ -78,7 +78,7 @@ namespace Provausio.Data.Test.Collections
         }
 
         [Fact]
-        public void IsLooseMatch_CaseInSensitive_DoesNotMatch()
+        public void IsLooseMatch_CaseInsensitive_DoesNotMatch()
         {
             // arrange
             var testClass = new FakeClass { Property1 = "Foo", Property2 = 10 };
@@ -88,7 +88,7 @@ namespace Provausio.Data.Test.Collections
                 t => t.Property2);
 
             // act
-            var isMatch = filter.IsLooseMatch(testClass);
+            var isMatch = filter.IsLooseMatch(testClass, false);
 
             // assert
             Assert.True(isMatch);
@@ -105,7 +105,7 @@ namespace Provausio.Data.Test.Collections
                 t => t.Property2);
 
             // act
-            var isMatch = filter.IsExactMatch(testClass);
+            var isMatch = filter.IsExactMatch(testClass, true);
 
             // assert
             Assert.True(isMatch);
@@ -122,7 +122,7 @@ namespace Provausio.Data.Test.Collections
                 t => t.Property2);
 
             // act
-            var isMatch = filter.IsExactMatch(testClass);
+            var isMatch = filter.IsExactMatch(testClass, true);
 
             // assert
             Assert.False(isMatch);
@@ -171,7 +171,7 @@ namespace Provausio.Data.Test.Collections
             filter.IncludeAll();
 
             // act
-            var isMatch = filter.IsLooseMatch(testClass);
+            var isMatch = filter.IsLooseMatch(testClass, false);
 
             // assert
             Assert.True(isMatch);
@@ -186,7 +186,7 @@ namespace Provausio.Data.Test.Collections
             filter.IncludeAll();
 
             // act
-            var isMatch = filter.IsLooseMatch(testClass);
+            var isMatch = filter.IsLooseMatch(testClass, false);
 
             // assert
             Assert.False(isMatch);
@@ -200,7 +200,7 @@ namespace Provausio.Data.Test.Collections
             filter.IncludeAll();
 
             // act
-            var results = GetSampleList().Where(x => filter.IsLooseMatch(x));
+            var results = GetSampleList().Where(x => filter.IsLooseMatch(x, false));
 
             // assert
             Assert.True(results.All(r => r.Property2 == 16));
