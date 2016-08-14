@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\DynamicSort.cs" />
+    <Compile Include="Collections\ISearchFilter.cs" />
     <Compile Include="Collections\PropertyFilter.cs" />
     <Compile Include="Ext\WhereExt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

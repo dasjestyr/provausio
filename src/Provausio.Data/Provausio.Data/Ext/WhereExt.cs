@@ -43,4 +43,17 @@ namespace Provausio.Data.Ext
             return Where(asQueryable, filter, mode, caseSensitive);
         }
     }
+
+    public enum SearchMode
+    {
+        /// <summary>
+        /// Searches each included property as an exact phrase
+        /// </summary>
+        Exact,
+
+        /// <summary>
+        /// Searches each included property for any matches with any word in the query phrase.
+        /// </summary>
+        Loose
+    }
 }

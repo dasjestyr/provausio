@@ -107,17 +107,4 @@ namespace Provausio.Data.Collections
             return Expression.Lambda<Func<T, object>>(field, param);
         }
     }
-
-    public interface ISearchFilter<in T>
-    {
-        bool IsLooseMatch(T target, bool caseSensitive);
-
-        bool IsExactMatch(T target, bool caseSensitive);
-    }
-
-    public enum SearchMode
-    {
-        Exact,
-        Loose
-    }
 }
