@@ -14,7 +14,7 @@ namespace Provausio.Data.Test.Collections
         public void AddKey_AddReferenceType_DoesNotThrow()
         {
             // arrange
-            var sort = new DynamicSort<FakeSortClass>();
+            var sort = new DynamicSort<FakeSortClass>(t => t.Name);
 
             // act
             sort.AddKey("name", "name desc", t => t.Name);
@@ -27,7 +27,7 @@ namespace Provausio.Data.Test.Collections
         public void AddKey_AddValueType_DoesNotThrow()
         {
             // arrange
-            var sort = new DynamicSort<FakeSortClass>();
+            var sort = new DynamicSort<FakeSortClass>(t => t.Name);
 
             // act
             sort.AddKey("name", "name desc", t => t.Age);
@@ -40,7 +40,7 @@ namespace Provausio.Data.Test.Collections
         public void Apply_SortByName_SortedHighestToLowest()
         {
             // arrange
-            var sort = new DynamicSort<FakeSortClass>();
+            var sort = new DynamicSort<FakeSortClass>(t => t.Name);
             sort.AddKey("age", "age desc", t => t.Age);
             var coll = GetSampleList();
 
@@ -68,7 +68,7 @@ namespace Provausio.Data.Test.Collections
         public void Apply_EmptyKey_ReturnsSameQuery()
         {
             // arrange
-            var sort = new DynamicSort<FakeSortClass>();
+            var sort = new DynamicSort<FakeSortClass>(t => t.Name);
             sort.AddKey("age", "age desc", t => t.Age);
             var coll = GetSampleList();
 
@@ -83,7 +83,7 @@ namespace Provausio.Data.Test.Collections
         public void Apply_NoMapper_ReturnsSameQuery()
         {
             // arrange
-            var sort = new DynamicSort<FakeSortClass>();
+            var sort = new DynamicSort<FakeSortClass>(t => t.Name);
             var coll = GetSampleList();
 
             // act

@@ -12,13 +12,16 @@ namespace Provausio.Data.Collections
         private readonly List<Expression<Func<T, object>>> _properties;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyFilter{T}"/> class.
+        /// Initializes a new instance of the <see cref="PropertyFilter{T}" /> class.
         /// </summary>
         /// <param name="query">The query.</param>
-        public PropertyFilter(string query)
+        /// <param name="includedProperties">The included properties.</param>
+        public PropertyFilter(string query, params Expression<Func<T, object>>[] includedProperties)
         {
             _query = query;
             _properties = new List<Expression<Func<T, object>>>();
+
+            Include(includedProperties);
         }
 
         /// <summary>
@@ -27,6 +30,9 @@ namespace Provausio.Data.Collections
         /// <param name="properties">The properties.</param>
         public void Include(params Expression<Func<T, object>>[] properties)
         {
+            if (!properties.Any())
+                return;
+
             _properties.AddRange(properties);
         }
 
@@ -52,6 +58,9 @@ namespace Provausio.Data.Collections
         /// </returns>
         public bool IsLooseMatch(T target, bool caseSensitive)
         {
+            if (string.IsNullOrEmpty(_query))
+                return true;
+
             var objectWords = new List<string>();
 
             foreach (var property in _properties)
@@ -75,6 +84,9 @@ namespace Provausio.Data.Collections
         /// </returns>
         public bool IsExactMatch(T target, bool caseSensitive)
         {
+            if (string.IsNullOrEmpty(_query))
+                return true;
+
             return _properties
                 .Select(property => property.Compile()(target).ToString())
                 .Any(stringProp => _query.Equals(stringProp, caseSensitive 
@@ -84,7 +96,9 @@ namespace Provausio.Data.Collections
 
         private static string[] GetWords(string source)
         {
-            return source.Split(' ');
+            return string.IsNullOrEmpty(source) 
+                ? new string[0] 
+                : source.Split(' ');
         }
 
         private static bool MatchesAny(IEnumerable<string> source, string[] compareTo, bool caseSensitive)

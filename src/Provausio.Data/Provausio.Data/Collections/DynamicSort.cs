@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 
 namespace Provausio.Data.Collections
 {
     public class DynamicSort<T>
     {
+        private const string DefaultSortKey = "@@fallback@@";
         private readonly Dictionary<string, Tuple<Expression<Func<T, object>>, bool>> _mappings;
 
-        public DynamicSort()
+        public DynamicSort(Expression<Func<T, object>> defaultSortMember)
         {
             _mappings = new Dictionary<string, Tuple<Expression<Func<T, object>>, bool>>();
         }
@@ -24,8 +26,7 @@ namespace Provausio.Data.Collections
         public void AddKey<TKey>(string ascendingKey, string descendingKey, Expression<Func<T, TKey>> orderByMember)
         {
             // make conversion to account for value types and reference types
-            Expression expr = Expression.Convert(orderByMember.Body, typeof(object));
-            var lambda = Expression.Lambda<Func<T, object>>(expr, orderByMember.Parameters);
+            var lambda = ConvertExpression(orderByMember);
 
             _mappings.Add(ascendingKey, new Tuple<Expression<Func<T, object>>, bool>(lambda, false));
             _mappings.Add(descendingKey, new Tuple<Expression<Func<T, object>>, bool>(lambda, true));
@@ -60,6 +61,14 @@ namespace Provausio.Data.Collections
         public IQueryable<T> Apply(string key, IEnumerable<T> query)
         {
             return Apply(key, query.AsQueryable());
+        }
+
+        public Expression<Func<T, object>> ConvertExpression<TKey>(Expression<Func<T, TKey>> expression)
+        {
+            Expression expr = Expression.Convert(expression.Body, typeof(object));
+            var lambda = Expression.Lambda<Func<T, object>>(expr, expression.Parameters);
+
+            return lambda;
         }
     }
 }
