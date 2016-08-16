@@ -120,6 +120,11 @@
 			unexpected invocations on loose mocks.
 		</summary>
         </member>
+        <member name="T:Moq.InterceptObjectMethodsMixin">
+            <summary>
+            Intercept strategy that handles `System.Object` methods.
+            </summary>
+        </member>
         <member name="M:Moq.AddActualInvocation.GetEventFromName(System.String)">
             <summary>
             Get an eventInfo for a given event name.  Search type ancestors depth first if necessary.
@@ -2567,28 +2572,6 @@
             Extends AllMethodsHook.ShouldInterceptMethod to also intercept Object.ToString().
             </summary>
         </member>
-        <member name="T:Moq.Proxy.InterfaceProxy">
-            <summary>
-            <para>The base class used for all our interface-inheriting proxies, which overrides the default
-            Object.ToString() behavior, to route it via the mock by default, unless overriden by a
-            real implementation.</para>
-            
-            <para>This is required to allow Moq to mock ToString on proxy *interface* implementations.</para>
-            </summary>
-            <remarks>
-            <para><strong>This is internal to Moq and should not be generally used.</strong></para>
-            
-            <para>Unfortunately it must be public, due to cross-assembly visibility issues with reflection, 
-            see github.com/Moq/moq4/issues/98 for details.</para>
-            </remarks>
-        </member>
-        <member name="M:Moq.Proxy.InterfaceProxy.ToString">
-            <summary>
-            Overrides the default ToString implementation to instead find the mock for this mock.Object,
-            and return MockName + '.Object' as the mocked object's ToString, to make it easy to relate
-            mocks and mock object instances in error messages.
-            </summary>
-        </member>
         <member name="M:Moq.Proxy.CastleProxyFactory.CreateProxy(System.Type,Moq.Proxy.ICallInterceptor,System.Type[],System.Object[])">
             <inheritdoc />
         </member>
@@ -4261,6 +4244,13 @@
             Throws a sequence of exceptions, once per call.
             </summary>
         </member>
+        <member name="T:Moq.SerializableTypesValueProvider">
+            <summary>
+            A <see cref="T:Moq.IDefaultValueProvider"/> that returns an empty default value 
+            for serializable types that do not implement <see cref="T:System.Runtime.Serialization.ISerializable"/> properly, 
+            and returns the value provided by the decorated provider otherwise.
+            </summary>
+        </member>
         <member name="M:Moq.ExpressionExtensions.ToLambda(System.Linq.Expressions.Expression)">
             <summary>
             Casts the expression to a lambda expression, removing 
@@ -5602,13 +5592,13 @@
             <summary>Branch: master</summary>
         </member>
         <member name="F:ThisAssembly.Git.Commit">
-            <summary>Commit: 6446b19</summary>
+            <summary>Commit: 756bf4e</summary>
         </member>
         <member name="F:ThisAssembly.Git.Sha">
-            <summary>Sha: 6446b19a32eb52e4d6d4e49bff61316938c9bd72</summary>
+            <summary>Sha: 756bf4e3e7b213c6d819ae7acd5e04280a07a040</summary>
         </member>
         <member name="F:ThisAssembly.Git.Commits">
-            <summary>Commits on top of base version: 13</summary>
+            <summary>Commits on top of base version: 21</summary>
         </member>
         <member name="F:ThisAssembly.Git.Tag">
             <summary>Tag: </summary>
@@ -5638,7 +5628,7 @@
             <summary>Minor: 5</summary>
         </member>
         <member name="F:ThisAssembly.Git.SemVer.Patch">
-            <summary>Patch: 13</summary>
+            <summary>Patch: 21</summary>
         </member>
         <member name="F:ThisAssembly.Git.SemVer.Label">
             <summary>Label: </summary>
