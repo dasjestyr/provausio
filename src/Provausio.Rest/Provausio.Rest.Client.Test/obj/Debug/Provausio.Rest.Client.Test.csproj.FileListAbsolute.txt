@@ -24,3 +24,4 @@ C:\source\RestClient\src\Provausio.Rest.Client.Test\bin\Debug\Newtonsoft.Json.xm
 C:\source\RestClient\src\Provausio.Rest.Client.Test\obj\Debug\Provausio.Rest.Client.Test.dll
 C:\source\RestClient\src\Provausio.Rest.Client.Test\obj\Debug\Provausio.Rest.Client.Test.pdb
 C:\source\RestClient\src\Provausio.Rest.Client.Test\bin\Debug\Provausio.Rest.Client.xml
+C:\source\provausio\src\Provausio.Rest\Provausio.Rest.Client.Test\obj\Debug\Provausio.Rest.Client.Test.csprojResolveAssemblyReference.cache

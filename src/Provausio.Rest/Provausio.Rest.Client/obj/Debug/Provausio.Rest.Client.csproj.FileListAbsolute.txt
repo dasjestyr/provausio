@@ -5,3 +5,4 @@ C:\source\RestClient\src\Provausio.Rest.Client\bin\Debug\Newtonsoft.Json.xml
 C:\source\RestClient\src\Provausio.Rest.Client\obj\Debug\Provausio.Rest.Client.dll
 C:\source\RestClient\src\Provausio.Rest.Client\obj\Debug\Provausio.Rest.Client.pdb
 C:\source\RestClient\src\Provausio.Rest.Client\bin\Debug\Provausio.Rest.Client.XML
+C:\source\provausio\src\Provausio.Rest\Provausio.Rest.Client\obj\Debug\Provausio.Rest.Client.csprojResolveAssemblyReference.cache
