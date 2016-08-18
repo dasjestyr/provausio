@@ -41,10 +41,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\DynamicSort.cs" />
+    <Compile Include="Collections\ExpressionReplacer.cs" />
     <Compile Include="Collections\ISearchFilter.cs" />
+    <Compile Include="Collections\PredicateBuilder.cs" />
     <Compile Include="Collections\PropertyFilter.cs" />
-    <Compile Include="Ext\WhereExt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Ext\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

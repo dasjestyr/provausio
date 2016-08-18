@@ -11,6 +11,17 @@ namespace Provausio.Data.Test.Collections
     public class DynamicSortTests
     {
         [Fact]
+        public void Ctor_NullDefault_Throws()
+        {
+            // arrange
+
+            // act
+
+            // assert
+            Assert.Throws<ArgumentNullException>(() => new DynamicSort<FakeClass>(null));
+        }
+
+        [Fact]
         public void AddKey_AddReferenceType_DoesNotThrow()
         {
             // arrange
@@ -65,22 +76,22 @@ namespace Provausio.Data.Test.Collections
         }
 
         [Fact]
-        public void Apply_EmptyKey_ReturnsSameQuery()
+        public void Apply_EmptyKey_SortsByDefault()
         {
             // arrange
             var sort = new DynamicSort<FakeSortClass>(t => t.Name);
             sort.AddKey("age", "age desc", t => t.Age);
-            var coll = GetSampleList();
+            var coll = GetSampleList().ToList();
 
             // act
             var result = sort.Apply(string.Empty, coll);
             
             // assert
-            Assert.Equal(coll.AsQueryable(), result);
+            Assert.Equal("Jeremy", result.First().Name);
         }
 
         [Fact]
-        public void Apply_NoMapper_ReturnsSameQuery()
+        public void Apply_NoMapper_SortsByDefault()
         {
             // arrange
             var sort = new DynamicSort<FakeSortClass>(t => t.Name);
@@ -90,7 +101,24 @@ namespace Provausio.Data.Test.Collections
             var result = sort.Apply("age", coll);
 
             // assert
-            Assert.Equal(coll.AsQueryable(), result);
+            Assert.Equal("Jeremy", result.First().Name);
+        }
+
+        [Fact]
+        public void Apply_WithThenBy_ExpectedOrder()
+        {
+            // arrange
+            var sort = new DynamicSort<FakeSortClass>(t => t.Name);
+            sort.AddKey("age", "age desc", t => t.Name, t => t.Age);
+            var coll = GetSampleList();
+            
+            // act
+            var result = sort.Apply("age", coll);
+
+            // assert (verify that the grouping is ordered, basically)
+            var oldestJulieAge = result.Where(p => p.Name.Equals("Julie")).Max(p => p.Age);
+            var julies = result.Where(p => p.Name.Equals("Julie"));
+            Assert.Equal(oldestJulieAge, julies.Last().Age);
         }
 
         private static IEnumerable<FakeSortClass> GetSampleList()
@@ -114,13 +142,19 @@ namespace Provausio.Data.Test.Collections
                     Name = "Julie",
                     Age = 37,
                     BirthDate = new DateTime(1979, 1, 14)
-                }
+                },
+                new FakeSortClass
+                {
+                    Name  = "Julie",
+                    Age = 31,
+                    BirthDate = new DateTime(1985, 9, 20)
+                },
             };
         }
     }
 
     [ExcludeFromCodeCoverage]
-    internal class FakeSortClass
+    public class FakeSortClass
     {
         public string Name { get; set; }
 

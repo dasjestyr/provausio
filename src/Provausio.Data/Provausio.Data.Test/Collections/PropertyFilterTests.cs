@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Provausio.Data.Collections;
@@ -10,200 +11,142 @@ namespace Provausio.Data.Test.Collections
     public class PropertyFilterTests
     {
         [Fact]
-        public void IsLooseMatch_ShouldMatch_MatchesFirstProperty()
+        public void Ctor_NullQuery_DoesNotThrow()
         {
             // arrange
-            var testClass = new FakeClass {Property1 = "Foo", Property2 = 10};
+
+            // act
+            var filter = new PropertyFilter<FakeClass>(null);
+
+            // assert
+            Assert.NotNull(filter);
+        }
+
+        [Fact]
+        public void Ctor_EmptyQuery_DoesNotThrow()
+        {
+            // arrange
+
+            // act
+            var filter = new PropertyFilter<FakeClass>(string.Empty);
+
+            // assert
+            Assert.NotNull(filter);
+        }
+
+        [Fact]
+        public void Ctor_ValidQuery_Initializes()
+        {
+            // arrange
+
+            // act
             var filter = new PropertyFilter<FakeClass>("foo");
-            filter.Include(
-                t => t.Property1,
-                t => t.Property2);
-
-            // act
-            var isMatch = filter.IsLooseMatch(testClass, false);
 
             // assert
-            Assert.True(isMatch);
+            Assert.NotNull(filter);
         }
 
         [Fact]
-        public void IsLooseMatch_ShouldMatch_MatchesSecondProperty()
+        public void Ctor_SingleProperty_Initializes()
         {
             // arrange
-            var testClass = new FakeClass { Property1 = "Foo", Property2 = 10 };
-            var filter = new PropertyFilter<FakeClass>("10");
-            filter.Include(
-                t => t.Property1,
-                t => t.Property2);
 
             // act
-            var isMatch = filter.IsLooseMatch(testClass, false);
+            var filter = new PropertyFilter<FakeClass>("foo", t => t.Property1);
 
             // assert
-            Assert.True(isMatch);
+            Assert.NotNull(filter);
+            Assert.Equal(1, filter.IncludedProperties.Count);
         }
 
         [Fact]
-        public void IsLooseMatch_ShouldNotMatch_MatchesFirstProperty()
+        public void Ctor_MultipleProperties_Initializes()
         {
             // arrange
-            var testClass = new FakeClass { Property1 = "Foo", Property2 = 10 };
-            var filter = new PropertyFilter<FakeClass>("55");
-            filter.Include(
-                t => t.Property1,
-                t => t.Property2);
 
             // act
-            var isMatch = filter.IsLooseMatch(testClass, false);
+            var filter = new PropertyFilter<FakeClass>("foo", 
+                t => t.Property1, 
+                t => t.Property2);
 
             // assert
-            Assert.False(isMatch);
+            Assert.NotNull(filter);
+            Assert.Equal(2, filter.IncludedProperties.Count);
         }
 
         [Fact]
-        public void IsLooseMatch_CaseSensitive_DoesNotMatch()
-        {
-            // arrange
-            var testClass = new FakeClass { Property1 = "Foo", Property2 = 10 };
-            var filter = new PropertyFilter<FakeClass>("foo");
-            filter.Include(
-                t => t.Property1,
-                t => t.Property2);
-
-            // act
-            var isMatch = filter.IsLooseMatch(testClass, true);
-
-            // assert
-            Assert.False(isMatch);
-        }
-
-        [Fact]
-        public void IsLooseMatch_CaseInsensitive_DoesNotMatch()
-        {
-            // arrange
-            var testClass = new FakeClass { Property1 = "Foo", Property2 = 10 };
-            var filter = new PropertyFilter<FakeClass>("foo");
-            filter.Include(
-                t => t.Property1,
-                t => t.Property2);
-
-            // act
-            var isMatch = filter.IsLooseMatch(testClass, false);
-
-            // assert
-            Assert.True(isMatch);
-        }
-
-        [Fact]
-        public void IsExactMatch_MatchingPhrase_CaseSensitive_DoesMatch()
-        {
-            // arrange
-            var testClass = new FakeClass { Property1 = "Foo", Property2 = 10 };
-            var filter = new PropertyFilter<FakeClass>("Foo");
-            filter.Include(
-                t => t.Property1,
-                t => t.Property2);
-
-            // act
-            var isMatch = filter.IsExactMatch(testClass, true);
-
-            // assert
-            Assert.True(isMatch);
-        }
-
-        [Fact]
-        public void IsExactMatch_MatchingPhrase_CaseSensitive_DoesNotMatch()
-        {
-            // arrange
-            var testClass = new FakeClass { Property1 = "Foo", Property2 = 10 };
-            var filter = new PropertyFilter<FakeClass>("foo");
-            filter.Include(
-                t => t.Property1,
-                t => t.Property2);
-
-            // act
-            var isMatch = filter.IsExactMatch(testClass, true);
-
-            // assert
-            Assert.False(isMatch);
-        }
-
-        [Fact]
-        public void IsExactMatch_MatchingPhrase_CaseInsensitive_DoesMatch()
-        {
-            // arrange
-            var testClass = new FakeClass { Property1 = "Foo", Property2 = 10 };
-            var filter = new PropertyFilter<FakeClass>("foo");
-            filter.Include(
-                t => t.Property1,
-                t => t.Property2);
-
-            // act
-            var isMatch = filter.IsExactMatch(testClass, false);
-
-            // assert
-            Assert.True(isMatch);
-        }
-
-        [Fact]
-        public void IsExactMatch_MatchingPhrase_CaseInsensitive_DoesNotMatch()
-        {
-            // arrange
-            var testClass = new FakeClass { Property1 = "Foo", Property2 = 10 };
-            var filter = new PropertyFilter<FakeClass>("20");
-            filter.Include(
-                t => t.Property1,
-                t => t.Property2);
-
-            // act
-            var isMatch = filter.IsExactMatch(testClass, false);
-
-            // assert
-            Assert.False(isMatch);
-        }
-
-        [Fact]
-        public void ObjectCtor_DoesMatch()
+        public void IncludeAll_IncludesAllProperties()
         {
             // arrange
             var filter = new PropertyFilter<FakeClass>("foo");
-            var testClass = new FakeClass { Property1 = "Foo", Property2 = 10 };
+
+            // act
+            filter.IncludeAll();
+
+            // assert   
+            Assert.Equal(2, filter.IncludedProperties.Count);
+        }
+
+        [Fact]
+        public void Apply_NullQuery_ReturnsSource()
+        {
+            // arrange
+            var filter = new PropertyFilter<FakeClass>(null);
+            filter.IncludeAll();
+            var coll = GetSampleList().AsQueryable();
+
+            // act
+            var result = filter.Apply(coll);
+
+            // assert
+            Assert.Equal(coll, result);
+        }
+
+        [Fact]
+        public void Apply_EmptyQuery_ReturnsSource()
+        {
+            // arrange
+            var filter = new PropertyFilter<FakeClass>(string.Empty);
+            filter.IncludeAll();
+            var coll = GetSampleList().AsQueryable();
+
+            // act
+            var result = filter.Apply(coll);
+
+            // assert
+            Assert.Equal(coll, result);
+        }
+
+        [Fact]
+        public void Apply_ExpectedResult()
+        {
+            // arrange
+            var term = "foo";
+            var coll = GetSampleList().AsQueryable();
+            var filter = new PropertyFilter<FakeClass>(term);
             filter.IncludeAll();
 
             // act
-            var isMatch = filter.IsLooseMatch(testClass, false);
+            var result = filter.Apply(coll).ToList();
 
             // assert
-            Assert.True(isMatch);
+            Assert.True(result.Count(t => t.Property1.Equals(term, StringComparison.OrdinalIgnoreCase)) == 1);
         }
 
         [Fact]
-        public void ObjectCtor_DoesNotMatch()
+        public void Apply_Enumerable_ReturnsEnumerable()
         {
             // arrange
-            var filter = new PropertyFilter<FakeClass>("bar");
-            var testClass = new FakeClass { Property1 = "Foo", Property2 = 10 };
+            var term = "foo";
+            var coll = GetSampleList();
+            var filter = new PropertyFilter<FakeClass>(term);
             filter.IncludeAll();
 
             // act
-            var isMatch = filter.IsLooseMatch(testClass, false);
+            var result = filter.Apply(coll).ToList();
 
             // assert
-            Assert.False(isMatch);
-        }
-
-        [Fact]
-        public void IsLooseMatch_WithCollection_OnlyMatchesFound()
-        {
-            // arrange
-            var filter = new PropertyFilter<FakeClass>("16");
-            filter.IncludeAll();
-
-            // act
-            var results = GetSampleList().Where(x => filter.IsLooseMatch(x, false));
-
-            // assert
-            Assert.True(results.All(r => r.Property2 == 16));
+            Assert.True(result.Count(t => t.Property1.Equals(term, StringComparison.OrdinalIgnoreCase)) == 1);
         }
 
         private static IEnumerable<FakeClass> GetSampleList()
