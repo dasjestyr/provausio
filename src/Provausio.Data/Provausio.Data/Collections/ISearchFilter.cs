@@ -1,25 +1,14 @@
-﻿namespace Provausio.Data.Collections
+﻿using System.Linq;
+
+namespace Provausio.Data.Collections
 {
-    public interface ISearchFilter<in T>
+    public interface ISearchFilter<T>
     {
         /// <summary>
-        /// Returns true if any property in the target object matches any word in the query phrase.
+        /// Applies the filter to the specified query and returns the result.
         /// </summary>
-        /// <param name="target">The target.</param>
-        /// <param name="caseSensitive">if set to <c>true</c> [case sensitive].</param>
-        /// <returns>
-        ///   <c>true</c> if [is loose match] [the specified target]; otherwise, <c>false</c>.
-        /// </returns>
-        bool IsLooseMatch(T target, bool caseSensitive);
-
-        /// <summary>
-        /// Returns true if any property in the target object matches the query phrase word for word.
-        /// </summary>
-        /// <param name="target">The target.</param>
-        /// <param name="caseSensitive">if set to <c>true</c> [case sensitive].</param>
-        /// <returns>
-        ///   <c>true</c> if [is exact match] [the specified target]; otherwise, <c>false</c>.
-        /// </returns>
-        bool IsExactMatch(T target, bool caseSensitive);
+        /// <param name="source">The source.</param>
+        /// <returns></returns>
+        IQueryable<T> Apply(IQueryable<T> source);
     }
 }

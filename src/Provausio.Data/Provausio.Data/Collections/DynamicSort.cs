@@ -2,34 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 
 namespace Provausio.Data.Collections
 {
     public class DynamicSort<T>
     {
-        private const string DefaultSortKey = "@@fallback@@";
-        private readonly Dictionary<string, Tuple<Expression<Func<T, object>>, bool>> _mappings;
+        private const string DefaultSortKey = "@@default@@";
+        private readonly Dictionary<string, Tuple<LambdaExpression, bool, IEnumerable<LambdaExpression>>> _selectors;
 
-        public DynamicSort(Expression<Func<T, object>> defaultSortMember)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DynamicSort{T}" /> class.
+        /// </summary>
+        /// <param name="defaultSortItem">The default sort item.</param>
+        /// <exception cref="System.ArgumentNullException">defaultSortItem</exception>
+        public DynamicSort(Expression<Func<T, object>> defaultSortItem)
         {
-            _mappings = new Dictionary<string, Tuple<Expression<Func<T, object>>, bool>>();
+            if (defaultSortItem == null)
+                throw new ArgumentNullException(nameof(defaultSortItem));
+
+            _selectors = new Dictionary<string, Tuple<LambdaExpression, bool, IEnumerable<LambdaExpression>>>
+            {
+                {DefaultSortKey, new Tuple<LambdaExpression, bool, IEnumerable<LambdaExpression>>(defaultSortItem, false, new List<LambdaExpression>())}
+            };
         }
 
         /// <summary>
         /// Registers a string against an actual property on the target object.
         /// </summary>
-        /// <typeparam name="TKey">The type of the key.</typeparam>
         /// <param name="ascendingKey">The ascending key.</param>
         /// <param name="descendingKey">The descending key.</param>
         /// <param name="orderByMember">The order by member.</param>
-        public void AddKey<TKey>(string ascendingKey, string descendingKey, Expression<Func<T, TKey>> orderByMember)
+        /// <param name="thenBy">The then by.</param>
+        public void AddKey(string ascendingKey, string descendingKey, Expression<Func<T, dynamic>> orderByMember, params Expression<Func<T, dynamic>>[] thenBy)
         {
             // make conversion to account for value types and reference types
-            var lambda = ConvertExpression(orderByMember);
+            _selectors.Add(
+                ascendingKey.ToLower(),
+                new Tuple<LambdaExpression, bool, IEnumerable<LambdaExpression>>(orderByMember, false, thenBy));
 
-            _mappings.Add(ascendingKey, new Tuple<Expression<Func<T, object>>, bool>(lambda, false));
-            _mappings.Add(descendingKey, new Tuple<Expression<Func<T, object>>, bool>(lambda, true));
+            _selectors.Add(
+                descendingKey.ToLower(),
+                new Tuple<LambdaExpression, bool, IEnumerable<LambdaExpression>>(orderByMember, true, thenBy));
         }
 
         /// <summary>
@@ -38,16 +51,24 @@ namespace Provausio.Data.Collections
         /// <param name="key">The key.</param>
         /// <param name="query">The query.</param>
         /// <returns></returns>
-        public IQueryable<T> Apply(string key, IQueryable<T> query)
+        public IOrderedQueryable<T> Apply(string key, IQueryable<T> query)
         {
-            if(string.IsNullOrEmpty(key) || !_mappings.ContainsKey(key))
-                return query;
+            key = key.ToLower();
+            bool isDescending;
 
-            var mapping = _mappings[key];
+            var selectorGroup = GetSelector(key, out isDescending);
+            dynamic selector = selectorGroup.Item1;
 
-            var newQuery = mapping.Item2
-                ? query.OrderByDescending(mapping.Item1)
-                : query.OrderBy(mapping.Item1);
+            IOrderedQueryable<T> newQuery = isDescending
+                ? Queryable.OrderByDescending(query, selector)
+                : Queryable.OrderBy(query, selector);
+
+            foreach (dynamic thenby in selectorGroup.Item3)
+            {
+                newQuery = isDescending
+                    ? Queryable.ThenByDescending(newQuery, thenby)
+                    : Queryable.ThenBy(newQuery, thenby);
+            }
 
             return newQuery;
         }
@@ -63,12 +84,18 @@ namespace Provausio.Data.Collections
             return Apply(key, query.AsQueryable());
         }
 
-        public Expression<Func<T, object>> ConvertExpression<TKey>(Expression<Func<T, TKey>> expression)
+        private Tuple<LambdaExpression, bool, IEnumerable<LambdaExpression>> GetSelector(string key, out bool isDescending)
         {
-            Expression expr = Expression.Convert(expression.Body, typeof(object));
-            var lambda = Expression.Lambda<Func<T, object>>(expr, expression.Parameters);
+            if (string.IsNullOrEmpty(key) || !_selectors.ContainsKey(key))
+            {
+                isDescending = false;
+                return _selectors[DefaultSortKey];
+            }
 
-            return lambda;
+            var selector = _selectors[key];
+            isDescending = selector.Item2;
+
+            return _selectors[key];
         }
     }
 }

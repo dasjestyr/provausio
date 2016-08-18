@@ -67,8 +67,8 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Collections\DynamicSortTests.cs" />
+    <Compile Include="Collections\PredicateBuilderTests.cs" />
     <Compile Include="Collections\PropertyFilterTests.cs" />
-    <Compile Include="Ext\WhereExtTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +79,9 @@
       <Project>{3E1403D6-6DCD-4907-A1B9-1F0EB228AF2A}</Project>
       <Name>Provausio.Data</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Ext\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
