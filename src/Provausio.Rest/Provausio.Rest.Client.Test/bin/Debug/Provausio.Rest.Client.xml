@@ -212,6 +212,12 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:Provausio.Rest.Client.ResourceBuilder">
+            <summary>
+            Default implementation of <see cref="T:Provausio.Rest.Client.IResourceBuilder"/>
+            </summary>
+            <seealso cref="T:Provausio.Rest.Client.IResourceBuilder" />
+        </member>
         <member name="M:Provausio.Rest.Client.ResourceBuilder.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:Provausio.Rest.Client.ResourceBuilder"/> class.

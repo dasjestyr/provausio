@@ -6,7 +6,11 @@ using Provausio.Rest.Client.Infrastructure;
 
 namespace Provausio.Rest.Client
 {
-    internal class ResourceBuilder : IResourceBuilder
+    /// <summary>
+    /// Default implementation of <see cref="IResourceBuilder"/>
+    /// </summary>
+    /// <seealso cref="IResourceBuilder" />
+    public class ResourceBuilder : IResourceBuilder
     {
         private readonly List<KeyValuePair<string, string>> _segments = new List<KeyValuePair<string, string>>();
         private readonly QueryParameterCollection _queryParameters = new QueryParameterCollection();
