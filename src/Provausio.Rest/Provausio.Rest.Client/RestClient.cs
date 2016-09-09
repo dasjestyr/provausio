@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using Provausio.Rest.Client.Infrastructure;
 
@@ -58,6 +59,20 @@ namespace Provausio.Rest.Client
         }
 
         /// <summary>
+        /// Executes a GET request asychronously
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> GetAsync(ServiceRequest request)
+        {
+            using (var client = GetClient())
+            {
+                var httpRequest = new HttpRequestMessage(HttpMethod.Get, request.ResourceBuilder.BuildUri());
+                return await client.SendAsync(httpRequest);
+            }
+        }
+
+        /// <summary>
         /// Executes a DELETE request asychronously
         /// </summary>
         /// <returns></returns>
@@ -71,6 +86,20 @@ namespace Provausio.Rest.Client
         }
 
         /// <summary>
+        /// Executes a GET request asychronously
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> DeleteAsync(ServiceRequest request)
+        {
+            using (var client = GetClient())
+            {
+                var httpRequest = new HttpRequestMessage(HttpMethod.Delete, request.ResourceBuilder.BuildUri());
+                return await client.SendAsync(httpRequest);
+            }
+        }
+
+        /// <summary>
         /// Executes a POST request asychronously
         /// </summary>
         /// <returns></returns>
@@ -80,6 +109,20 @@ namespace Provausio.Rest.Client
             {
                 var request = new HttpRequestMessage(HttpMethod.Post, _builder.BuildUri());
                 return await client.SendAsync(request);
+            }
+        }
+
+        /// <summary>
+        /// Executes a GET request asychronously
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> PostAsync(ServiceRequest request)
+        {
+            using (var client = GetClient())
+            {
+                var httpRequest = new HttpRequestMessage(HttpMethod.Post, request.ResourceBuilder.BuildUri());
+                return await client.SendAsync(httpRequest);
             }
         }
 
@@ -98,6 +141,21 @@ namespace Provausio.Rest.Client
         }
 
         /// <summary>
+        /// Executes a GET request asychronously
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="content">The content.</param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> PostAsync(ServiceRequest request, HttpContent content)
+        {
+            using (var client = GetClient())
+            {
+                var httpRequest = new HttpRequestMessage(HttpMethod.Post, request.ResourceBuilder.BuildUri()) { Content = content };
+                return await client.SendAsync(httpRequest);
+            }
+        }
+
+        /// <summary>
         /// Executes a PUT request asychronously. Will also attach a payload with the request.
         /// </summary>
         /// <returns></returns>
@@ -107,6 +165,20 @@ namespace Provausio.Rest.Client
             {
                 var request = new HttpRequestMessage(HttpMethod.Put, _builder.BuildUri());
                 return await client.SendAsync(request);
+            }
+        }
+
+        /// <summary>
+        /// Executes a GET request asychronously
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> PutAsync(ServiceRequest request)
+        {
+            using (var client = GetClient())
+            {
+                var httpRequest = new HttpRequestMessage(HttpMethod.Put, request.ResourceBuilder.BuildUri());
+                return await client.SendAsync(httpRequest);
             }
         }
 
@@ -121,6 +193,21 @@ namespace Provausio.Rest.Client
             {
                 var request = new HttpRequestMessage(HttpMethod.Put, _builder.BuildUri()) {Content = content};
                 return await client.SendAsync(request);
+            }
+        }
+
+        /// <summary>
+        /// Executes a GET request asychronously
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="content">The content.</param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> PutAsync(ServiceRequest request, HttpContent content)
+        {
+            using (var client = GetClient())
+            {
+                var httpRequest = new HttpRequestMessage(HttpMethod.Get, request.ResourceBuilder.BuildUri()) { Content = content };
+                return await client.SendAsync(httpRequest);
             }
         }
 
