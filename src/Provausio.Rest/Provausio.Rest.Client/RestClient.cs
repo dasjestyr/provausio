@@ -1,23 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using Provausio.Rest.Client.Infrastructure;
 
 namespace Provausio.Rest.Client
 {
-    public class RestClient : IResourceBuilder
+    /*****************************************************************************************************************
+     * There are some confusing design decisions here. The reason that this client implements the resource builder
+     * is simply for convenience. A client can choose to use separate request/client objects or just use the client
+     * directly to build a request and execute it. I'm not sure if I like this... 
+     * 
+     * TODO: reconsider this functionality, or at least make it more clear as to its intent
+     * Some of the design side effects is that the the builder is forced to attach the client so that it can provide
+     * AsClient() in order to return the original client while using the Fluid builder pattern which is kind of 
+     * awkward. As a result, there are ctors that do and do not accept instances of the resource builder which is also 
+     * awkward.
+     *****************************************************************************************************************/
+
+    /// <summary>
+    /// The <see cref="RestClient"/> provides an interface responsible for building the final request and sending it.
+    /// </summary>
+    /// <seealso cref="IResourceBuilder" />
+    public class RestClient : IResourceBuilder, IDisposable
     {
         private readonly IResourceBuilder _builder;
-
-        /// <summary>
-        /// Gets or sets the handler.
-        /// </summary>
-        /// <value>
-        /// The handler.
-        /// </value>
-        public HttpMessageHandler Handler { get; set; }
+        private HttpClient _httpClient;
+        private bool _disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RestClient"/> class.
@@ -25,24 +34,41 @@ namespace Provausio.Rest.Client
         public RestClient()
             : this(new ResourceBuilder())
         {
-            _builder.WithClient(this);
-        }
-
-        public RestClient(Scheme scheme, string host) 
-            : this()
-        {
-            _builder.WithClient(this);
-            _builder.WithScheme(scheme).WithHost(host);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RestClient"/> class.
         /// </summary>
-        /// <param name="builder">The builder.</param>
-        public RestClient(IResourceBuilder builder)
+        /// <param name="scheme">The scheme.</param>
+        /// <param name="host">The host.</param>
+        public RestClient(Scheme scheme, string host) 
+            : this()
         {
+            _builder
+                .WithScheme(scheme)
+                .WithHost(host);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RestClient"/> class.
+        /// This supports the attachment of a builder. For example, if a builder is being passed around for modification before initializing the client and the caller still wants to be able to use the fluid interface ON the client itself.
+        /// </summary>
+        /// <param name="builder">The builder.</param>
+        internal RestClient(IResourceBuilder builder)
+        {
+            _httpClient = new HttpClient();
+            
             _builder = builder;
             _builder.WithClient(this);
+        }
+
+        /// <summary>
+        /// Sets the http message handler.
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        public void SetHandler(HttpMessageHandler handler)
+        {
+            _httpClient = new HttpClient(handler);
         }
 
         /// <summary>
@@ -51,11 +77,8 @@ namespace Provausio.Rest.Client
         /// <returns></returns>
         public async Task<HttpResponseMessage> GetAsync()
         {
-            using (var client = GetClient())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, _builder.BuildUri());
-                return await client.SendAsync(request);
-            }
+            var request = new HttpRequestMessage(HttpMethod.Get, _builder.BuildUri());
+            return await Send(request);
         }
 
         /// <summary>
@@ -63,13 +86,13 @@ namespace Provausio.Rest.Client
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns></returns>
+        /// <remarks>
+        /// This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
+        /// </remarks>
         public async Task<HttpResponseMessage> GetAsync(ServiceRequest request)
         {
-            using (var client = GetClient())
-            {
-                var httpRequest = new HttpRequestMessage(HttpMethod.Get, request.ResourceBuilder.BuildUri());
-                return await client.SendAsync(httpRequest);
-            }
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, request.ResourceBuilder.BuildUri());
+            return await Send(httpRequest);
         }
 
         /// <summary>
@@ -78,11 +101,8 @@ namespace Provausio.Rest.Client
         /// <returns></returns>
         public async Task<HttpResponseMessage> DeleteAsync()
         {
-            using (var client = GetClient())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Delete, _builder.BuildUri());
-                return await client.SendAsync(request);
-            }
+            var request = new HttpRequestMessage(HttpMethod.Delete, _builder.BuildUri());
+            return await Send(request);
         }
 
         /// <summary>
@@ -90,13 +110,13 @@ namespace Provausio.Rest.Client
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns></returns>
+        /// <remarks>
+        /// This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
+        /// </remarks>
         public async Task<HttpResponseMessage> DeleteAsync(ServiceRequest request)
         {
-            using (var client = GetClient())
-            {
-                var httpRequest = new HttpRequestMessage(HttpMethod.Delete, request.ResourceBuilder.BuildUri());
-                return await client.SendAsync(httpRequest);
-            }
+            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, request.ResourceBuilder.BuildUri());
+            return await Send(httpRequest);
         }
 
         /// <summary>
@@ -105,25 +125,23 @@ namespace Provausio.Rest.Client
         /// <returns></returns>
         public async Task<HttpResponseMessage> PostAsync()
         {
-            using (var client = GetClient())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Post, _builder.BuildUri());
-                return await client.SendAsync(request);
-            }
+            var request = new HttpRequestMessage(HttpMethod.Post, _builder.BuildUri());
+            return await Send(request);
         }
 
         /// <summary>
         /// Executes a GET request asychronously
         /// </summary>
         /// <param name="request">The request.</param>
+        /// <param name="content">The content.</param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> PostAsync(ServiceRequest request)
+        /// <remarks>
+        /// This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
+        /// </remarks>
+        public async Task<HttpResponseMessage> PostAsync(ServiceRequest request, HttpContent content = null)
         {
-            using (var client = GetClient())
-            {
-                var httpRequest = new HttpRequestMessage(HttpMethod.Post, request.ResourceBuilder.BuildUri());
-                return await client.SendAsync(httpRequest);
-            }
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, request.ResourceBuilder.BuildUri());
+            return await Send(httpRequest, content);
         }
 
         /// <summary>
@@ -133,26 +151,8 @@ namespace Provausio.Rest.Client
         /// <returns></returns>
         public async Task<HttpResponseMessage> PostAsync(HttpContent content)
         {
-            using (var client = GetClient())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Post, _builder.BuildUri()) {Content = content};
-                return await client.SendAsync(request);
-            }
-        }
-
-        /// <summary>
-        /// Executes a GET request asychronously
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <param name="content">The content.</param>
-        /// <returns></returns>
-        public async Task<HttpResponseMessage> PostAsync(ServiceRequest request, HttpContent content)
-        {
-            using (var client = GetClient())
-            {
-                var httpRequest = new HttpRequestMessage(HttpMethod.Post, request.ResourceBuilder.BuildUri()) { Content = content };
-                return await client.SendAsync(httpRequest);
-            }
+            var request = new HttpRequestMessage(HttpMethod.Post, _builder.BuildUri());
+            return await Send(request, content);
         }
 
         /// <summary>
@@ -161,25 +161,23 @@ namespace Provausio.Rest.Client
         /// <returns></returns>
         public async Task<HttpResponseMessage> PutAsync()
         {
-            using (var client = GetClient())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Put, _builder.BuildUri());
-                return await client.SendAsync(request);
-            }
+            var request = new HttpRequestMessage(HttpMethod.Put, _builder.BuildUri());
+            return await Send(request);
         }
 
         /// <summary>
         /// Executes a GET request asychronously
         /// </summary>
         /// <param name="request">The request.</param>
+        /// <param name="content">The content.</param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> PutAsync(ServiceRequest request)
+        /// <remarks>
+        /// This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
+        /// </remarks>
+        public async Task<HttpResponseMessage> PutAsync(ServiceRequest request, HttpContent content = null)
         {
-            using (var client = GetClient())
-            {
-                var httpRequest = new HttpRequestMessage(HttpMethod.Put, request.ResourceBuilder.BuildUri());
-                return await client.SendAsync(httpRequest);
-            }
+            var httpRequest = new HttpRequestMessage(HttpMethod.Put, request.ResourceBuilder.BuildUri());
+            return await Send(httpRequest, content);
         }
 
         /// <summary>
@@ -189,33 +187,19 @@ namespace Provausio.Rest.Client
         /// <returns></returns>
         public async Task<HttpResponseMessage> PutAsync(HttpContent content)
         {
-            using (var client = GetClient())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Put, _builder.BuildUri()) {Content = content};
-                return await client.SendAsync(request);
-            }
+            var request = new HttpRequestMessage(HttpMethod.Put, _builder.BuildUri());
+            return await Send(request, content);
         }
 
-        /// <summary>
-        /// Executes a GET request asychronously
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <param name="content">The content.</param>
-        /// <returns></returns>
-        public async Task<HttpResponseMessage> PutAsync(ServiceRequest request, HttpContent content)
+        private async Task<HttpResponseMessage> Send(HttpRequestMessage request, HttpContent content = null)
         {
-            using (var client = GetClient())
-            {
-                var httpRequest = new HttpRequestMessage(HttpMethod.Get, request.ResourceBuilder.BuildUri()) { Content = content };
-                return await client.SendAsync(httpRequest);
-            }
-        }
+            if(_disposed)
+                throw new ObjectDisposedException(nameof(_httpClient));
 
-        private HttpClient GetClient()
-        {
-            return Handler == null
-                ? new HttpClient()
-                : new HttpClient(Handler);
+            if (content != null)
+                request.Content = content;
+
+            return await _httpClient.SendAsync(request).ConfigureAwait(false);
         }
 
         #region -- IResourceBuilder Implementation --
@@ -272,5 +256,27 @@ namespace Provausio.Rest.Client
         }
 
         #endregion
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+            _disposed = true;
+        }
+
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing || _disposed)
+                return;
+            
+            _httpClient.Dispose();
+        }
     }
 }

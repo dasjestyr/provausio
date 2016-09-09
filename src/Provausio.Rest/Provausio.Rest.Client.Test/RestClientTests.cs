@@ -49,13 +49,28 @@ namespace Provausio.Rest.Client.Test
             // arrange
             var mockBuilder = new Mock<IResourceBuilder>();
             mockBuilder.Setup(m => m.BuildUri()).Returns(new Uri("http://www.google.com"));
-            var client = new RestClient(mockBuilder.Object) {Handler = GetHandler(HttpStatusCode.OK)};
+            var client = new RestClient(mockBuilder.Object);
+            client.SetHandler(GetHandler(HttpStatusCode.OK));
 
             // act
             var result = await client.GetAsync();
 
             // assert
             mockBuilder.Verify(m => m.BuildUri(), Times.Once);
+        }
+
+        [Fact]
+        public async Task Get_WithServiceRequest_RequestBuilderIsCalled()
+        {
+            // arrange
+            var request = GetServiceRequest();
+            var client = GetBaseClient();
+
+            // act
+            var result = await client.GetAsync(request.Object);
+
+            // assert
+            request.Verify(m => m.ResourceBuilder, Times.Once);
         }
 
         [Fact]
@@ -84,6 +99,20 @@ namespace Provausio.Rest.Client.Test
         }
 
         [Fact]
+        public async Task Delete_WithServiceRequest_CallsRequestBuilder()
+        {
+            // arrange
+            var request = GetServiceRequest();
+            var client = GetBaseClient();
+
+            // act
+            var response = await client.DeleteAsync(request.Object);
+
+            // assert
+            request.Verify(m => m.ResourceBuilder, Times.Once);
+        }
+
+        [Fact]
         public async Task Post_MadeRequestToCorrectUrl()
         {
             // arrange
@@ -96,6 +125,20 @@ namespace Provausio.Rest.Client.Test
             Assert.Equal("POST http://www.google.com", await result.Content.ReadAsStringAsync());
         }
 
+        [Fact]
+        public async Task Post_WithServiceRequest_CallsRequestBuilder()
+        {
+            // arrange
+            var request = GetServiceRequest();
+            var client = GetBaseClient();
+
+            // act
+            var response = await client.PostAsync(request.Object);
+
+            // assert
+            request.Verify(m => m.ResourceBuilder, Times.Once);
+        }
+        
         [Fact]
         public async Task Put_MadeREquestToCorrectUrl()
         {
@@ -110,13 +153,27 @@ namespace Provausio.Rest.Client.Test
         }
 
         [Fact]
+        public async Task Put_WithServiceRequest_CallsRequestBuilder()
+        {
+            // arrange
+            var request = GetServiceRequest();
+            var client = GetBaseClient();
+
+            // act
+            var response = await client.PutAsync(request.Object);
+
+            // assert
+            request.Verify(m => m.ResourceBuilder, Times.Once);
+        }
+
+        [Fact]
         public async Task Post_WithBody_BodyIsAttached()
         {
             // arrange
             var message = "Hello world";
             var content = new StringContent(message, Encoding.UTF8, "application/json");
             var client = GetBaseClient();
-            client.Handler = new FakeHandler(HttpStatusCode.OK, true);
+            client.SetHandler(new FakeHandler(HttpStatusCode.OK, true));
 
             // act
             var result = await client.PostAsync(content);
@@ -132,7 +189,7 @@ namespace Provausio.Rest.Client.Test
             var message = "Hello world";
             var content = new StringContent(message);
             var client = GetBaseClient();
-            client.Handler = new FakeHandler(HttpStatusCode.OK, true);
+            client.SetHandler(new FakeHandler(HttpStatusCode.OK, true));
 
             // act
             var result = await client.PutAsync(content);
@@ -261,15 +318,105 @@ namespace Provausio.Rest.Client.Test
 
             // assert
             builder.Verify(m => m.BuildUri(), Times.Once);
+        }
 
+        [Fact]
+        public async Task Dispose_DisposesHttpClient()
+        {
+            // arrange
+            var request = GetServiceRequest();
+            var client = GetBaseClient();
+
+            // act
+            client.Dispose();
+
+            // assert
+            await Assert.ThrowsAsync<ObjectDisposedException>(() => client.GetAsync(request.Object));
+        }
+
+        [Fact]
+        public async Task Dispose_DisposedObject_Throws()
+        {
+            // arrange
+            var request = GetServiceRequest();
+            var client = GetBaseClient();
+
+            // act
+            client.Dispose();
+
+            // assert
+            await Assert.ThrowsAsync<ObjectDisposedException>(() => client.GetAsync(request.Object));
+        }
+
+        [Fact]
+        public void Finalize_DoesNotCallDispose()
+        {
+            // arrange
+            var request = GetServiceRequest();
+            var client = GetBaseClient();
+
+            // act
+            for (var i = 0; i < 1000; i++)
+            {
+                client = GetBaseClient();
+            }
+
+            client = null;
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            // assert
+        }
+
+        [Fact]
+        public void WithClient_SetsClient()
+        {
+            // arrange
+            var client = new RestClient();
+
+            // act
+            var client2 = client.WithClient(client);
+
+            // assert
+            Assert.Equal(client, client2);
+        }
+
+        [Fact]
+        public void AsClient_Direct_ReturnsOriginalClient()
+        {
+            // arrange
+            var client = GetBaseClient();
+
+            // act
+            var client2 = client.AsClient();
+
+            // assert
+            Assert.Equal(client,client2);
+        }
+
+        private static Mock<ServiceRequest> GetServiceRequest()
+        {
+            var builder = GetBuilder();
+            var request = new Mock<ServiceRequest>();
+            request.Setup(m => m.ResourceBuilder).Returns(builder.Object);
+
+            return request;
         }
 
         private static RestClient GetBaseClient()
         {
             var client = new RestClient();
-            client.Handler = GetHandler(HttpStatusCode.OK);
+            client.SetHandler(GetHandler(HttpStatusCode.OK));
             client.WithScheme(Scheme.Http).WithHost("www.google.com");
+
             return client;
+        }
+
+        private static Mock<IResourceBuilder> GetBuilder()
+        {
+            var mock = new Mock<IResourceBuilder>();
+            mock.Setup(m => m.BuildUri()).Returns(new Uri("http://www.google.com"));
+            return mock;
         }
 
         private static HttpMessageHandler GetHandler(HttpStatusCode requestedCode)

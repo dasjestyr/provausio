@@ -34,6 +34,17 @@ namespace Provausio.Rest.Client.Test
         }
 
         [Fact]
+        public void Ctor_NullClient_Throws()
+        {
+            // arrange
+
+            // act
+
+            // assert
+            Assert.Throws<ArgumentNullException>(() => new ResourceBuilder(null));
+        }
+
+        [Fact]
         public void Ctor_UnspecifiedScheme_Throws()
         {
             // arrange

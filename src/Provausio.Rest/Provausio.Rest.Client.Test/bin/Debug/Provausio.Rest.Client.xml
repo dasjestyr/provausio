@@ -319,24 +319,36 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="P:Provausio.Rest.Client.RestClient.Handler">
+        <member name="T:Provausio.Rest.Client.RestClient">
             <summary>
-            Gets or sets the handler.
+            The <see cref="T:Provausio.Rest.Client.RestClient"/> provides an interface responsible for building the final request and sending it.
             </summary>
-            <value>
-            The handler.
-            </value>
+            <seealso cref="T:Provausio.Rest.Client.IResourceBuilder" />
         </member>
         <member name="M:Provausio.Rest.Client.RestClient.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:Provausio.Rest.Client.RestClient"/> class.
             </summary>
         </member>
-        <member name="M:Provausio.Rest.Client.RestClient.#ctor(Provausio.Rest.Client.IResourceBuilder)">
+        <member name="M:Provausio.Rest.Client.RestClient.#ctor(Provausio.Rest.Client.Infrastructure.Scheme,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:Provausio.Rest.Client.RestClient"/> class.
             </summary>
+            <param name="scheme">The scheme.</param>
+            <param name="host">The host.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.#ctor(Provausio.Rest.Client.IResourceBuilder)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.RestClient"/> class.
+            This supports the attachment of a builder. For example, if a builder is being passed around for modification before initializing the client and the caller still wants to be able to use the fluid interface ON the client itself.
+            </summary>
             <param name="builder">The builder.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.SetHandler(System.Net.Http.HttpMessageHandler)">
+            <summary>
+            Sets the http message handler.
+            </summary>
+            <param name="handler">The handler.</param>
         </member>
         <member name="M:Provausio.Rest.Client.RestClient.GetAsync">
             <summary>
@@ -344,17 +356,48 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Provausio.Rest.Client.RestClient.GetAsync(Provausio.Rest.Client.ServiceRequest)">
+            <summary>
+            Executes a GET request asychronously
+            </summary>
+            <param name="request">The request.</param>
+            <returns></returns>
+            <remarks>
+            This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
+            </remarks>
+        </member>
         <member name="M:Provausio.Rest.Client.RestClient.DeleteAsync">
             <summary>
             Executes a DELETE request asychronously
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Provausio.Rest.Client.RestClient.DeleteAsync(Provausio.Rest.Client.ServiceRequest)">
+            <summary>
+            Executes a GET request asychronously
+            </summary>
+            <param name="request">The request.</param>
+            <returns></returns>
+            <remarks>
+            This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
+            </remarks>
+        </member>
         <member name="M:Provausio.Rest.Client.RestClient.PostAsync">
             <summary>
             Executes a POST request asychronously
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.PostAsync(Provausio.Rest.Client.ServiceRequest,System.Net.Http.HttpContent)">
+            <summary>
+            Executes a GET request asychronously
+            </summary>
+            <param name="request">The request.</param>
+            <param name="content">The content.</param>
+            <returns></returns>
+            <remarks>
+            This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
+            </remarks>
         </member>
         <member name="M:Provausio.Rest.Client.RestClient.PostAsync(System.Net.Http.HttpContent)">
             <summary>
@@ -369,12 +412,42 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Provausio.Rest.Client.RestClient.PutAsync(Provausio.Rest.Client.ServiceRequest,System.Net.Http.HttpContent)">
+            <summary>
+            Executes a GET request asychronously
+            </summary>
+            <param name="request">The request.</param>
+            <param name="content">The content.</param>
+            <returns></returns>
+            <remarks>
+            This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
+            </remarks>
+        </member>
         <member name="M:Provausio.Rest.Client.RestClient.PutAsync(System.Net.Http.HttpContent)">
             <summary>
             Executes a PUT request asychronously. Will also attach a payload with the request.
             </summary>
             <param name="content">The content.</param>
             <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:Provausio.Rest.Client.RestClient.Dispose(System.Boolean)">
+            <summary>
+            Releases unmanaged and - optionally - managed resources.
+            </summary>
+            <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        </member>
+        <member name="P:Provausio.Rest.Client.ServiceRequest.ResourceBuilder">
+            <summary>
+            Gets the resource builder.
+            </summary>
+            <value>
+            The resource builder.
+            </value>
         </member>
     </members>
 </doc>
