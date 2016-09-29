@@ -356,48 +356,17 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Provausio.Rest.Client.RestClient.GetAsync(Provausio.Rest.Client.ServiceRequest)">
-            <summary>
-            Executes a GET request asychronously
-            </summary>
-            <param name="request">The request.</param>
-            <returns></returns>
-            <remarks>
-            This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
-            </remarks>
-        </member>
         <member name="M:Provausio.Rest.Client.RestClient.DeleteAsync">
             <summary>
             Executes a DELETE request asychronously
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Provausio.Rest.Client.RestClient.DeleteAsync(Provausio.Rest.Client.ServiceRequest)">
-            <summary>
-            Executes a GET request asychronously
-            </summary>
-            <param name="request">The request.</param>
-            <returns></returns>
-            <remarks>
-            This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
-            </remarks>
-        </member>
         <member name="M:Provausio.Rest.Client.RestClient.PostAsync">
             <summary>
             Executes a POST request asychronously
             </summary>
             <returns></returns>
-        </member>
-        <member name="M:Provausio.Rest.Client.RestClient.PostAsync(Provausio.Rest.Client.ServiceRequest,System.Net.Http.HttpContent)">
-            <summary>
-            Executes a GET request asychronously
-            </summary>
-            <param name="request">The request.</param>
-            <param name="content">The content.</param>
-            <returns></returns>
-            <remarks>
-            This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
-            </remarks>
         </member>
         <member name="M:Provausio.Rest.Client.RestClient.PostAsync(System.Net.Http.HttpContent)">
             <summary>
@@ -411,17 +380,6 @@
             Executes a PUT request asychronously. Will also attach a payload with the request.
             </summary>
             <returns></returns>
-        </member>
-        <member name="M:Provausio.Rest.Client.RestClient.PutAsync(Provausio.Rest.Client.ServiceRequest,System.Net.Http.HttpContent)">
-            <summary>
-            Executes a GET request asychronously
-            </summary>
-            <param name="request">The request.</param>
-            <param name="content">The content.</param>
-            <returns></returns>
-            <remarks>
-            This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
-            </remarks>
         </member>
         <member name="M:Provausio.Rest.Client.RestClient.PutAsync(System.Net.Http.HttpContent)">
             <summary>
@@ -441,13 +399,105 @@
             </summary>
             <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         </member>
-        <member name="P:Provausio.Rest.Client.ServiceRequest.ResourceBuilder">
+        <member name="T:Provausio.Rest.Client.WebClient">
+            <summary>
+            
+            </summary>
+            <seealso cref="T:System.IDisposable" />
+        </member>
+        <member name="M:Provausio.Rest.Client.WebClient.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.WebClient"/> class.
+            </summary>
+        </member>
+        <member name="M:Provausio.Rest.Client.WebClient.#ctor(System.Net.Http.HttpMessageHandler)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.WebClient"/> class.
+            </summary>
+            <param name="handler">The handler.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.WebClient.SendAsync(Provausio.Rest.Client.WebRequest)">
+            <summary>
+            Executes the web request and returns a raw <see cref="T:System.Net.Http.HttpResponseMessage"/>
+            </summary>
+            <param name="request">The request.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.WebClient.SendAsync(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Executes the web request and returns a raw <see cref="T:System.Net.Http.HttpResponseMessage"/>
+            </summary>
+            <param name="request">The request.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.WebClient.SendAsync``1(Provausio.Rest.Client.WebRequest)">
+            <summary>
+            Executes the request and attempts to deserialize the response body. If the body is null or empty, a null will be returned.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="request">The request.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.WebClient.SendAsync``1(Provausio.Rest.Client.WebRequest,System.Func{System.String,``0})">
+            <summary>
+            Executes the request and runs the provider mapper delgate, using the response body as an input parameter.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="request">The request.</param>
+            <param name="mapper">The mapper.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Provausio.Rest.Client.WebRequest">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Provausio.Rest.Client.WebRequest.ResourceBuilder">
             <summary>
             Gets the resource builder.
             </summary>
             <value>
             The resource builder.
             </value>
+        </member>
+        <member name="P:Provausio.Rest.Client.WebRequest.Method">
+            <summary>
+            Gets or sets the HTTP method.
+            </summary>
+            <value>
+            The method.
+            </value>
+        </member>
+        <member name="M:Provausio.Rest.Client.WebRequest.#ctor(System.Net.Http.HttpMethod)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.WebRequest"/> class.
+            </summary>
+            <param name="method">The method.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.WebRequest.#ctor(System.Net.Http.HttpMethod,Provausio.Rest.Client.IResourceBuilder)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Provausio.Rest.Client.WebRequest"/> class.
+            </summary>
+            <param name="method">The method.</param>
+            <param name="builder">The builder.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.WebRequest.SetRequest(Provausio.Rest.Client.IResourceBuilder)">
+            <summary>
+            To be executed when GetHttpRequest() is invoked.
+            </summary>
+            <param name="builder">The builder.</param>
+        </member>
+        <member name="M:Provausio.Rest.Client.WebRequest.GetHttpRequest">
+            <summary>
+            Gets the HTTP request. 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Provausio.Rest.Client.WebRequest.GetContent">
+            <summary>
+            Gets the http content that will be send along with the web request. This will be called when GetHttpRequest() is invoked.
+            </summary>
+            <returns></returns>
         </member>
     </members>
 </doc>

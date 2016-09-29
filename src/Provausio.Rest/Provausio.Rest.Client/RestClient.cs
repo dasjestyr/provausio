@@ -24,8 +24,8 @@ namespace Provausio.Rest.Client
     /// <seealso cref="IResourceBuilder" />
     public class RestClient : IResourceBuilder, IDisposable
     {
-        private readonly IResourceBuilder _builder;
-        private HttpClient _httpClient;
+        private IResourceBuilder _builder;
+        private WebClient _webClient;
         private bool _disposed;
 
         /// <summary>
@@ -56,8 +56,7 @@ namespace Provausio.Rest.Client
         /// <param name="builder">The builder.</param>
         internal RestClient(IResourceBuilder builder)
         {
-            _httpClient = new HttpClient();
-            
+            _webClient = new WebClient();   
             _builder = builder;
             _builder.WithClient(this);
         }
@@ -68,7 +67,7 @@ namespace Provausio.Rest.Client
         /// <param name="handler">The handler.</param>
         public void SetHandler(HttpMessageHandler handler)
         {
-            _httpClient = new HttpClient(handler);
+            _webClient = new WebClient(handler);
         }
 
         /// <summary>
@@ -80,21 +79,7 @@ namespace Provausio.Rest.Client
             var request = new HttpRequestMessage(HttpMethod.Get, _builder.BuildUri());
             return await Send(request);
         }
-
-        /// <summary>
-        /// Executes a GET request asychronously
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <returns></returns>
-        /// <remarks>
-        /// This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
-        /// </remarks>
-        public async Task<HttpResponseMessage> GetAsync(ServiceRequest request)
-        {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, request.ResourceBuilder.BuildUri());
-            return await Send(httpRequest);
-        }
-
+        
         /// <summary>
         /// Executes a DELETE request asychronously
         /// </summary>
@@ -104,21 +89,7 @@ namespace Provausio.Rest.Client
             var request = new HttpRequestMessage(HttpMethod.Delete, _builder.BuildUri());
             return await Send(request);
         }
-
-        /// <summary>
-        /// Executes a GET request asychronously
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <returns></returns>
-        /// <remarks>
-        /// This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
-        /// </remarks>
-        public async Task<HttpResponseMessage> DeleteAsync(ServiceRequest request)
-        {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, request.ResourceBuilder.BuildUri());
-            return await Send(httpRequest);
-        }
-
+        
         /// <summary>
         /// Executes a POST request asychronously
         /// </summary>
@@ -128,22 +99,7 @@ namespace Provausio.Rest.Client
             var request = new HttpRequestMessage(HttpMethod.Post, _builder.BuildUri());
             return await Send(request);
         }
-
-        /// <summary>
-        /// Executes a GET request asychronously
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <param name="content">The content.</param>
-        /// <returns></returns>
-        /// <remarks>
-        /// This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
-        /// </remarks>
-        public async Task<HttpResponseMessage> PostAsync(ServiceRequest request, HttpContent content = null)
-        {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, request.ResourceBuilder.BuildUri());
-            return await Send(httpRequest, content);
-        }
-
+        
         /// <summary>
         /// Executes a POST request asychronously. Will also attach a payload with the request.
         /// </summary>
@@ -164,22 +120,7 @@ namespace Provausio.Rest.Client
             var request = new HttpRequestMessage(HttpMethod.Put, _builder.BuildUri());
             return await Send(request);
         }
-
-        /// <summary>
-        /// Executes a GET request asychronously
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <param name="content">The content.</param>
-        /// <returns></returns>
-        /// <remarks>
-        /// This overload will ignore any builders that were set on the object in lieu of the builder contained within the provided request argument.
-        /// </remarks>
-        public async Task<HttpResponseMessage> PutAsync(ServiceRequest request, HttpContent content = null)
-        {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Put, request.ResourceBuilder.BuildUri());
-            return await Send(httpRequest, content);
-        }
-
+        
         /// <summary>
         /// Executes a PUT request asychronously. Will also attach a payload with the request.
         /// </summary>
@@ -194,16 +135,18 @@ namespace Provausio.Rest.Client
         private async Task<HttpResponseMessage> Send(HttpRequestMessage request, HttpContent content = null)
         {
             if(_disposed)
-                throw new ObjectDisposedException(nameof(_httpClient));
+                throw new ObjectDisposedException(nameof(_webClient));
 
             if (content != null)
                 request.Content = content;
 
-            return await _httpClient.SendAsync(request).ConfigureAwait(false);
+            return await _webClient
+                .SendAsync(request)
+                .ConfigureAwait(false);
         }
-
+        
         #region -- IResourceBuilder Implementation --
-
+        
         public IResourceBuilder WithScheme(Scheme scheme)
         {
             return _builder.WithScheme(scheme);
@@ -276,7 +219,7 @@ namespace Provausio.Rest.Client
             if (!disposing || _disposed)
                 return;
             
-            _httpClient.Dispose();
+            _webClient.Dispose();
         }
     }
 }

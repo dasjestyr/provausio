@@ -83,6 +83,8 @@
     <Compile Include="QueryParameterCollectionTests.cs" />
     <Compile Include="ResourceBuilderTests.cs" />
     <Compile Include="RestClientTests.cs" />
+    <Compile Include="WebClientTests.cs" />
+    <Compile Include="WebRequestTests.cs" />
     <Compile Include="XmlDataContractContentTests.cs" />
   </ItemGroup>
   <ItemGroup>

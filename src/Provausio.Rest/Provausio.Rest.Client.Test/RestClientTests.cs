@@ -58,21 +58,7 @@ namespace Provausio.Rest.Client.Test
             // assert
             mockBuilder.Verify(m => m.BuildUri(), Times.Once);
         }
-
-        [Fact]
-        public async Task Get_WithServiceRequest_RequestBuilderIsCalled()
-        {
-            // arrange
-            var request = GetServiceRequest();
-            var client = GetBaseClient();
-
-            // act
-            var result = await client.GetAsync(request.Object);
-
-            // assert
-            request.Verify(m => m.ResourceBuilder, Times.Once);
-        }
-
+        
         [Fact]
         public async Task Get_MadeRequestToCorrectUrl()
         {
@@ -87,6 +73,19 @@ namespace Provausio.Rest.Client.Test
         }
 
         [Fact]
+        public async Task Get_Disposed_Throws()
+        {
+            // arrange
+            var client = GetBaseClient();
+            client.Dispose();
+
+            // act
+            
+            // assert
+            await Assert.ThrowsAsync<ObjectDisposedException>(() => client.GetAsync());
+        }
+
+        [Fact]
         public async Task Delete_MadeRequestToCorrectUrl()
         {
             // arrange
@@ -97,21 +96,7 @@ namespace Provausio.Rest.Client.Test
             // assert
             Assert.Equal("DELETE http://www.google.com", await result.Content.ReadAsStringAsync());
         }
-
-        [Fact]
-        public async Task Delete_WithServiceRequest_CallsRequestBuilder()
-        {
-            // arrange
-            var request = GetServiceRequest();
-            var client = GetBaseClient();
-
-            // act
-            var response = await client.DeleteAsync(request.Object);
-
-            // assert
-            request.Verify(m => m.ResourceBuilder, Times.Once);
-        }
-
+        
         [Fact]
         public async Task Post_MadeRequestToCorrectUrl()
         {
@@ -123,20 +108,6 @@ namespace Provausio.Rest.Client.Test
 
             // assert
             Assert.Equal("POST http://www.google.com", await result.Content.ReadAsStringAsync());
-        }
-
-        [Fact]
-        public async Task Post_WithServiceRequest_CallsRequestBuilder()
-        {
-            // arrange
-            var request = GetServiceRequest();
-            var client = GetBaseClient();
-
-            // act
-            var response = await client.PostAsync(request.Object);
-
-            // assert
-            request.Verify(m => m.ResourceBuilder, Times.Once);
         }
         
         [Fact]
@@ -151,21 +122,7 @@ namespace Provausio.Rest.Client.Test
             // assert
             Assert.Equal("PUT http://www.google.com", await result.Content.ReadAsStringAsync());
         }
-
-        [Fact]
-        public async Task Put_WithServiceRequest_CallsRequestBuilder()
-        {
-            // arrange
-            var request = GetServiceRequest();
-            var client = GetBaseClient();
-
-            // act
-            var response = await client.PutAsync(request.Object);
-
-            // assert
-            request.Verify(m => m.ResourceBuilder, Times.Once);
-        }
-
+        
         [Fact]
         public async Task Post_WithBody_BodyIsAttached()
         {
@@ -319,55 +276,7 @@ namespace Provausio.Rest.Client.Test
             // assert
             builder.Verify(m => m.BuildUri(), Times.Once);
         }
-
-        [Fact]
-        public async Task Dispose_DisposesHttpClient()
-        {
-            // arrange
-            var request = GetServiceRequest();
-            var client = GetBaseClient();
-
-            // act
-            client.Dispose();
-
-            // assert
-            await Assert.ThrowsAsync<ObjectDisposedException>(() => client.GetAsync(request.Object));
-        }
-
-        [Fact]
-        public async Task Dispose_DisposedObject_Throws()
-        {
-            // arrange
-            var request = GetServiceRequest();
-            var client = GetBaseClient();
-
-            // act
-            client.Dispose();
-
-            // assert
-            await Assert.ThrowsAsync<ObjectDisposedException>(() => client.GetAsync(request.Object));
-        }
-
-        [Fact]
-        public void Finalize_DoesNotCallDispose()
-        {
-            // arrange
-            var request = GetServiceRequest();
-            var client = GetBaseClient();
-
-            // act
-            for (var i = 0; i < 1000; i++)
-            {
-                client = GetBaseClient();
-            }
-
-            client = null;
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
-            // assert
-        }
-
+        
         [Fact]
         public void WithClient_SetsClient()
         {
@@ -394,15 +303,6 @@ namespace Provausio.Rest.Client.Test
             Assert.Equal(client,client2);
         }
 
-        private static Mock<ServiceRequest> GetServiceRequest()
-        {
-            var builder = GetBuilder();
-            var request = new Mock<ServiceRequest>();
-            request.Setup(m => m.ResourceBuilder).Returns(builder.Object);
-
-            return request;
-        }
-
         private static RestClient GetBaseClient()
         {
             var client = new RestClient();
@@ -410,13 +310,6 @@ namespace Provausio.Rest.Client.Test
             client.WithScheme(Scheme.Http).WithHost("www.google.com");
 
             return client;
-        }
-
-        private static Mock<IResourceBuilder> GetBuilder()
-        {
-            var mock = new Mock<IResourceBuilder>();
-            mock.Setup(m => m.BuildUri()).Returns(new Uri("http://www.google.com"));
-            return mock;
         }
 
         private static HttpMessageHandler GetHandler(HttpStatusCode requestedCode)
