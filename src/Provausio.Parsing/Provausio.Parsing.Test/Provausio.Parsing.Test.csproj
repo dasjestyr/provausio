@@ -71,9 +71,6 @@
     <Compile Include="StringArrayObjectMapperTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Provausio.Parsing\Provausio.Parsing.csproj">
       <Project>{AA8E96E7-68C4-472C-B199-D6C359D2EEDB}</Project>
       <Name>Provausio.Parsing</Name>
@@ -86,6 +83,9 @@
     <Content Include="SalesData.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

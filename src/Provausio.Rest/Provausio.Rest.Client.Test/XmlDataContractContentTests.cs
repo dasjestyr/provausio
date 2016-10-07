@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Provausio.Rest.Client.ContentType;
@@ -28,7 +25,7 @@ namespace Provausio.Rest.Client.Test
             // assert
             Assert.NotNull(content);
         }
-
+        
         [Fact]
         public async Task Ctor_WithObject_StreamIsEqual()
         {

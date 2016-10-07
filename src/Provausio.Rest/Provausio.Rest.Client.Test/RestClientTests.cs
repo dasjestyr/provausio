@@ -49,7 +49,8 @@ namespace Provausio.Rest.Client.Test
             // arrange
             var mockBuilder = new Mock<IResourceBuilder>();
             mockBuilder.Setup(m => m.BuildUri()).Returns(new Uri("http://www.google.com"));
-            var client = new RestClient(mockBuilder.Object) {Handler = GetHandler(HttpStatusCode.OK)};
+            var client = new RestClient(mockBuilder.Object);
+            client.SetHandler(GetHandler(HttpStatusCode.OK));
 
             // act
             var result = await client.GetAsync();
@@ -57,7 +58,7 @@ namespace Provausio.Rest.Client.Test
             // assert
             mockBuilder.Verify(m => m.BuildUri(), Times.Once);
         }
-
+        
         [Fact]
         public async Task Get_MadeRequestToCorrectUrl()
         {
@@ -72,6 +73,19 @@ namespace Provausio.Rest.Client.Test
         }
 
         [Fact]
+        public async Task Get_Disposed_Throws()
+        {
+            // arrange
+            var client = GetBaseClient();
+            client.Dispose();
+
+            // act
+            
+            // assert
+            await Assert.ThrowsAsync<ObjectDisposedException>(() => client.GetAsync());
+        }
+
+        [Fact]
         public async Task Delete_MadeRequestToCorrectUrl()
         {
             // arrange
@@ -82,7 +96,7 @@ namespace Provausio.Rest.Client.Test
             // assert
             Assert.Equal("DELETE http://www.google.com", await result.Content.ReadAsStringAsync());
         }
-
+        
         [Fact]
         public async Task Post_MadeRequestToCorrectUrl()
         {
@@ -95,7 +109,7 @@ namespace Provausio.Rest.Client.Test
             // assert
             Assert.Equal("POST http://www.google.com", await result.Content.ReadAsStringAsync());
         }
-
+        
         [Fact]
         public async Task Put_MadeREquestToCorrectUrl()
         {
@@ -108,7 +122,7 @@ namespace Provausio.Rest.Client.Test
             // assert
             Assert.Equal("PUT http://www.google.com", await result.Content.ReadAsStringAsync());
         }
-
+        
         [Fact]
         public async Task Post_WithBody_BodyIsAttached()
         {
@@ -116,7 +130,7 @@ namespace Provausio.Rest.Client.Test
             var message = "Hello world";
             var content = new StringContent(message, Encoding.UTF8, "application/json");
             var client = GetBaseClient();
-            client.Handler = new FakeHandler(HttpStatusCode.OK, true);
+            client.SetHandler(new FakeHandler(HttpStatusCode.OK, true));
 
             // act
             var result = await client.PostAsync(content);
@@ -132,7 +146,7 @@ namespace Provausio.Rest.Client.Test
             var message = "Hello world";
             var content = new StringContent(message);
             var client = GetBaseClient();
-            client.Handler = new FakeHandler(HttpStatusCode.OK, true);
+            client.SetHandler(new FakeHandler(HttpStatusCode.OK, true));
 
             // act
             var result = await client.PutAsync(content);
@@ -261,14 +275,40 @@ namespace Provausio.Rest.Client.Test
 
             // assert
             builder.Verify(m => m.BuildUri(), Times.Once);
+        }
+        
+        [Fact]
+        public void WithClient_SetsClient()
+        {
+            // arrange
+            var client = new RestClient();
 
+            // act
+            var client2 = client.WithClient(client);
+
+            // assert
+            Assert.Equal(client, client2);
+        }
+
+        [Fact]
+        public void AsClient_Direct_ReturnsOriginalClient()
+        {
+            // arrange
+            var client = GetBaseClient();
+
+            // act
+            var client2 = client.AsClient();
+
+            // assert
+            Assert.Equal(client,client2);
         }
 
         private static RestClient GetBaseClient()
         {
             var client = new RestClient();
-            client.Handler = GetHandler(HttpStatusCode.OK);
+            client.SetHandler(GetHandler(HttpStatusCode.OK));
             client.WithScheme(Scheme.Http).WithHost("www.google.com");
+
             return client;
         }
 

@@ -23,7 +23,7 @@ namespace Provausio.Rest.Client.Test
             var handler = new FakeHandler(HttpStatusCode.OK, true);
             var client = new RestClient();
             client.WithScheme(Scheme.Http).WithHost("www.google.com");
-            client.Handler = handler;
+            client.SetHandler(handler);
 
             var result = await client.PostAsync(content);
 
@@ -45,7 +45,7 @@ namespace Provausio.Rest.Client.Test
             var handler = new FakeHandler(HttpStatusCode.OK, true);
             var client = new RestClient();
             client.WithScheme(Scheme.Http).WithHost("www.google.com");
-            client.Handler = handler;
+            client.SetHandler(handler);
 
             var result = await client.PostAsync(content);
 
@@ -74,7 +74,7 @@ namespace Provausio.Rest.Client.Test
             var handler = new FakeHandler(HttpStatusCode.OK, true);
             var client = new RestClient();
             client.WithScheme(Scheme.Http).WithHost("www.google.com");
-            client.Handler = handler;
+            client.SetHandler(handler);
 
             var result = await client.PostAsync(content);
 

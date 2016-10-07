@@ -1,16 +1,17 @@
 ﻿using System.Resources;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Provausio.Rest.Client")]
-[assembly: AssemblyDescription("A REST wrapper for HttpClient with a fluid interface")]
+[assembly: AssemblyTitle("Provausio.Practices")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Jeremy Stafford, Provausio")]
-[assembly: AssemblyProduct("RestClient")]
-[assembly: AssemblyCopyright("Copyright ©  2016 Jeremy Stafford")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Provausio.Practices")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
@@ -25,6 +26,5 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.8.0.*")]
-[assembly: AssemblyFileVersion("0.8.0.0")]
-[assembly: InternalsVisibleTo("Provausio.Rest.Client.Test")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

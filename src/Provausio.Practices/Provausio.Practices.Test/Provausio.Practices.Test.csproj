@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6E6C95A5-D3D1-45A2-8883-8A7C0D97EA69}</ProjectGuid>
+    <ProjectGuid>{5741D668-8667-4884-849C-D0BB2A4058FF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Provausio.Rest.Client.Test</RootNamespace>
-    <AssemblyName>Provausio.Rest.Client.Test</AssemblyName>
+    <RootNamespace>Provausio.Practices.Test</RootNamespace>
+    <AssemblyName>Provausio.Practices.Test</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -39,13 +39,11 @@
       <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Moq, Version=4.5.21.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\packages\Moq.4.5.21\lib\net45\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.5.22.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.5.22\lib\net45\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <HintPath>..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>
       <Private>True</Private>
@@ -76,25 +74,24 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="DeserializationTestObject.cs" />
-    <Compile Include="HttpresponseMessageExtTests.cs" />
-    <Compile Include="ObjectFormUrlEncodedContentTests.cs" />
+    <Compile Include="Patterns\Specification\AndNotSpecificationTests.cs" />
+    <Compile Include="Patterns\Specification\NotSpecificationTests.cs" />
+    <Compile Include="Patterns\Specification\OrNotSpecificationTests.cs" />
+    <Compile Include="Patterns\Specification\OrSpecificationTests.cs" />
+    <Compile Include="Patterns\Specification\SpecificationOfTTests.cs" />
+    <Compile Include="Patterns\Specification\SpecificationTest.cs" />
+    <Compile Include="Patterns\Specification\AndSpecificationTests.cs" />
+    <Compile Include="Patterns\Specification\FakeTarget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueryParameterCollectionTests.cs" />
-    <Compile Include="ResourceBuilderTests.cs" />
-    <Compile Include="RestClientTests.cs" />
-    <Compile Include="WebClientTests.cs" />
-    <Compile Include="WebRequestTests.cs" />
-    <Compile Include="XmlDataContractContentTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Provausio.Rest.Client\Provausio.Rest.Client.csproj">
-      <Project>{b8e3dfd0-69ec-4547-9615-b897c1ab0295}</Project>
-      <Name>Provausio.RestClient</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Provausio.Practices\Provausio.Practices.csproj">
+      <Project>{3BB6EB1A-E01F-47AE-B4EF-88519FCFCDC1}</Project>
+      <Name>Provausio.Practices</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
