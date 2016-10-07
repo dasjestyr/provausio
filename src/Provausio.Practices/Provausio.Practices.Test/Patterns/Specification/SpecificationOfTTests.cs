@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Provausio.Practices.Patterns;
+using Provausio.Practices.Patterns.Specification;
 using Xunit;
 
 namespace Provausio.Practices.Test.Patterns.Specification

@@ -1,5 +1,6 @@
 using Moq;
 using Provausio.Practices.Patterns;
+using Provausio.Practices.Patterns.Specification;
 
 namespace Provausio.Practices.Test.Patterns.Specification
 {

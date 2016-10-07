@@ -37,7 +37,14 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Patterns\Specification.cs" />
+    <Compile Include="Patterns\Messaging\MessageBus.cs" />
+    <Compile Include="Patterns\Specification\AndNotSpecification.cs" />
+    <Compile Include="Patterns\Specification\AndSpecification.cs" />
+    <Compile Include="Patterns\Specification\ISpecification.cs" />
+    <Compile Include="Patterns\Specification\NotSpecification.cs" />
+    <Compile Include="Patterns\Specification\OrNotSpecification.cs" />
+    <Compile Include="Patterns\Specification\OrSpecification.cs" />
+    <Compile Include="Patterns\Specification\Specification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

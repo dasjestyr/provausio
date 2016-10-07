@@ -74,6 +74,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Patterns\Messaging\MessageBusTests.cs" />
     <Compile Include="Patterns\Specification\AndNotSpecificationTests.cs" />
     <Compile Include="Patterns\Specification\NotSpecificationTests.cs" />
     <Compile Include="Patterns\Specification\OrNotSpecificationTests.cs" />
