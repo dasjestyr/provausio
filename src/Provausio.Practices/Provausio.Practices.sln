@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provausio.Practices", "Provausio.Practices\Provausio.Practices.csproj", "{3BB6EB1A-E01F-47AE-B4EF-88519FCFCDC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provausio.Practices.Test", "Provausio.Practices.Test\Provausio.Practices.Test.csproj", "{5741D668-8667-4884-849C-D0BB2A4058FF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BB6EB1A-E01F-47AE-B4EF-88519FCFCDC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BB6EB1A-E01F-47AE-B4EF-88519FCFCDC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BB6EB1A-E01F-47AE-B4EF-88519FCFCDC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BB6EB1A-E01F-47AE-B4EF-88519FCFCDC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5741D668-8667-4884-849C-D0BB2A4058FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5741D668-8667-4884-849C-D0BB2A4058FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5741D668-8667-4884-849C-D0BB2A4058FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5741D668-8667-4884-849C-D0BB2A4058FF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
